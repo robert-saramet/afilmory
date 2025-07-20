@@ -18,14 +18,14 @@ import { ActionGroup, ActionPanel } from './ActionGroup'
 import { FloatingActionButton } from './FloatingActionButton'
 import type { MasonryRef } from './Masonic'
 import { Masonry } from './Masonic'
-import { MasonryHeaderMasonryItem } from './MasonryHeaderMasonryItem'
+// import { MasonryHeaderMasonryItem } from './MasonryHeaderMasonryItem' // Removed header box
 import { MasonryPhotoItem } from './MasonryPhotoItem'
 
-class MasonryHeaderItem {
-  static default = new MasonryHeaderItem()
-}
+// class MasonryHeaderItem {
+//   static default = new MasonryHeaderItem()
+// }
 
-type MasonryItemType = PhotoManifest | MasonryHeaderItem
+type MasonryItemType = PhotoManifest // | MasonryHeaderItem
 
 const FIRST_SCREEN_ITEMS_COUNT = 30
 
@@ -166,13 +166,16 @@ export const MasonryRoot = () => {
       )}
 
       <div className="p-1 lg:px-0 lg:pb-0 [&_*]:!select-none">
-        {isMobile && <MasonryHeaderMasonryItem className="mb-1" />}
+        {/* Simple Header */}
+        <header className="py-8 text-center lg:py-12">
+          <h1 className="text-2xl font-normal text-gray-700 lg:text-3xl dark:text-gray-300">
+            Photography by Robert Saramet
+          </h1>
+        </header>
+
         <Masonry<MasonryItemType>
           ref={masonryRef}
-          items={useMemo(
-            () => (isMobile ? photos : [MasonryHeaderItem.default, ...photos]),
-            [photos, isMobile],
-          )}
+          items={useMemo(() => photos, [photos])}
           render={useCallback(
             (props) => (
               <MasonryItem
@@ -191,12 +194,42 @@ export const MasonryRoot = () => {
           rowGutter={4}
           itemHeightEstimate={400}
           itemKey={useTypeScriptHappyCallback((data, _index) => {
-            if (data instanceof MasonryHeaderItem) {
-              return 'header'
-            }
             return (data as PhotoManifest).id
           }, [])}
         />
+
+        {/* Footer */}
+        <footer className="mt-12 mb-8 text-center">
+          <div className="mx-auto max-w-md space-y-2 px-6">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Photography by <strong>Robert Saramet</strong>
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-500">
+              Powered by{' '}
+              <a
+                href="https://github.com/Afilmory/Afilmory"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-blue-600 transition-colors hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+              >
+                Afilmory
+              </a>{' '}
+              - An incredible photo gallery by{' '}
+              <a
+                href="https://innei.in"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-blue-600 transition-colors hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+              >
+                Innei
+              </a>
+            </p>
+            <p className="text-xs text-gray-400 dark:text-gray-600">
+              {photos.length} {photos.length === 1 ? 'photo' : 'photos'} • Built{' '}
+              {new Date().getFullYear()}
+            </p>
+          </div>
+        </footer>
       </div>
 
       <ActionPanel
@@ -232,9 +265,6 @@ export const MasonryItem = memo(
   }) => {
     // 为每个 item 生成唯一的 key 用于追踪
     const itemKey = useMemo(() => {
-      if (data instanceof MasonryHeaderItem) {
-        return 'header'
-      }
       return (data as PhotoManifest).id
     }, [data])
 
@@ -242,11 +272,7 @@ export const MasonryItem = memo(
     const shouldAnimate = !hasAnimated && index < FIRST_SCREEN_ITEMS_COUNT
 
     // 计算动画延迟
-    const delay = shouldAnimate
-      ? data instanceof MasonryHeaderItem
-        ? 0
-        : Math.min(index * 0.05, 0.3)
-      : 0
+    const delay = shouldAnimate ? Math.min(index * 0.05, 0.3) : 0
 
     // Framer Motion 动画变体
     const itemVariants = {
@@ -268,27 +294,23 @@ export const MasonryItem = memo(
       },
     }
 
-    if (data instanceof MasonryHeaderItem) {
-      return <MasonryHeaderMasonryItem style={{ width }} />
-    } else {
-      return (
-        <m.div
-          key={itemKey}
-          variants={shouldAnimate ? itemVariants : undefined}
-          initial={shouldAnimate ? 'hidden' : 'visible'}
-          animate="visible"
-          onAnimationComplete={shouldAnimate ? onAnimationComplete : undefined}
-        >
-          <MasonryPhotoItem
-            data={data as PhotoManifest}
-            width={width}
-            index={index}
-            onPhotoClick={onPhotoClick}
-            photos={photos}
-          />
-        </m.div>
-      )
-    }
+    return (
+      <m.div
+        key={itemKey}
+        variants={shouldAnimate ? itemVariants : undefined}
+        initial={shouldAnimate ? 'hidden' : 'visible'}
+        animate="visible"
+        onAnimationComplete={shouldAnimate ? onAnimationComplete : undefined}
+      >
+        <MasonryPhotoItem
+          data={data as PhotoManifest}
+          width={width}
+          index={index}
+          onPhotoClick={onPhotoClick}
+          photos={photos}
+        />
+      </m.div>
+    )
   },
 )
 

@@ -55,9 +55,11 @@ export const MasonryHeaderMasonryItem = ({
           </div>
         </div>
 
+        {/* Site title hidden per user preference
         <h2 className="mt-1 mb-1 text-2xl font-semibold text-gray-900 dark:text-white">
           {siteConfig.name}
         </h2>
+        */}
 
         {/* Social media links */}
         {siteConfig.social && (

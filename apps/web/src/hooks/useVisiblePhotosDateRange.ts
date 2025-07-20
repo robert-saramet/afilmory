@@ -65,18 +65,18 @@ export const useVisiblePhotosDateRange = (_photos: PhotoManifest[]) => {
         })
       }
 
-      // 如果是同一年
+      // Same year
       if (startYear === endYear) {
-        // 如果是同一个月
+        // Same month
         if (startMonth === endMonth) {
-          return `${startYear}年${startDate.getMonth() + 1}月${startDate.getDate()}日 - ${endDate.getDate()}日`
+          return `${startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endDate.getDate()}, ${startYear}`
         } else {
-          return `${startYear}年${startDate.getMonth() + 1}月 - ${endDate.getMonth() + 1}月`
+          return `${startDate.toLocaleDateString('en-US', { month: 'short' })} - ${endDate.toLocaleDateString('en-US', { month: 'short' })}, ${startYear}`
         }
       }
 
-      // 不同年份
-      return `${startYear}年${startDate.getMonth() + 1}月 - ${endYear}年${endDate.getMonth() + 1}月`
+      // Different years
+      return `${startDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} - ${endDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}`
     },
     [i18n.language],
   )

@@ -158,7 +158,7 @@ export const PhotoMarkerPin = ({
                     <span>
                       {new Date(
                         marker.photo.exif.DateTimeOriginal,
-                      ).toLocaleDateString('zh-CN', {
+                      ).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'short',
                         day: 'numeric',

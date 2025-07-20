@@ -32,6 +32,27 @@ export const MasonryPhotoItem = ({
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
 
+  // Generate a meaningful title with date and location instead of filename
+  const generatePhotoTitle = useCallback((photo: PhotoManifest) => {
+    const date = photo.exif?.DateTimeOriginal || photo.dateTaken
+    if (!date) return photo.title
+
+    const formattedDate = new Date(date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+
+    // Add GPS coordinates if available
+    if (photo.exif?.GPSLatitude && photo.exif?.GPSLongitude) {
+      const lat = Number(photo.exif.GPSLatitude).toFixed(4)
+      const lng = Number(photo.exif.GPSLongitude).toFixed(4)
+      return `${formattedDate} • ${lat}, ${lng}`
+    }
+
+    return formattedDate
+  }, [])
+
   // Live Photo 相关状态
   const [isPlayingLivePhoto, setIsPlayingLivePhoto] = useState(false)
   const [livePhotoVideoLoaded, setLivePhotoVideoLoaded] = useState(false)
@@ -236,7 +257,7 @@ export const MasonryPhotoItem = ({
         <img
           ref={imageRef}
           src={data.thumbnailUrl}
-          alt={data.title}
+          alt={generatePhotoTitle(data)}
           className={clsx(
             'absolute inset-0 h-full w-full object-cover duration-300 group-hover:scale-105',
           )}
@@ -318,7 +339,7 @@ export const MasonryPhotoItem = ({
             {/* 基本信息和标签 section */}
             <div className="mb-3 [&_*]:duration-300">
               <h3 className="mb-2 truncate text-sm font-medium opacity-0 group-hover:opacity-100">
-                {data.title}
+                {generatePhotoTitle(data)}
               </h3>
               {data.description && (
                 <p className="mb-2 line-clamp-2 text-sm text-white/80 opacity-0 group-hover:opacity-100">
