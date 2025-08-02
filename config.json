@@ -1,0 +1,16 @@
+{
+  "name": "Robert's Photography",
+  "title": "Robert's Photography",
+  "description": "A tiny little sample of my photography",
+  "url": "https://photos.quackk.dev/",
+  "accentColor": "#2563eb",
+  "author": {
+    "name": "Robert Saramet",
+    "url": "https://quackk.dev/",
+    "avatar": "https://github.com/robert-saramet.png"
+  },
+  "map": [
+    "maplibre"
+  ],
+  "mapStyle": "builtin"
+}

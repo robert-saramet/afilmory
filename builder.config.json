@@ -1,0 +1,10 @@
+{
+  "storage": {
+    "provider": "s3",
+    "bucket": "photos",
+    "region": "auto",
+    "prefix": "",
+    "customDomain": "https://r2.photos.quackk.dev",
+    "endpoint": "https://bbf501250173de8d868b2cdc270cf7dc.r2.cloudflarestorage.com"
+  }
+}
