@@ -63,4 +63,6 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy apps/web/dist --project-name=photo-gallery --compatibility-date=2024-01-01
+          workingDirectory: apps/web/
+          packageManager: pnpm
+          command: pages deploy dist --project-name=photo-gallery --compatibility-date=2024-01-01
