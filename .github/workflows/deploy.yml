@@ -65,4 +65,4 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: apps/web/
           packageManager: pnpm
-          command: pages deploy dist --project-name=photo-gallery --compatibility-date=2024-01-01
+          command: pages deploy dist --project-name=photo-gallery
