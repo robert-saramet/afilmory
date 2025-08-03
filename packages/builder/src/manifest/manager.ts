@@ -35,7 +35,7 @@ export async function loadExistingManifest(): Promise<AfilmoryManifest> {
   return manifest
 }
 
-// 检查照片是否需要更新（基于最后修改时间）
+// Check if the photo needs to be updated (based on last modification time)
 export function needsUpdate(
   existingItem: PhotoManifestItem | undefined,
   s3Object: _Object,
@@ -49,9 +49,9 @@ export function needsUpdate(
   return s3Modified > existingModified
 }
 
-// 保存 manifest
+// Save manifest
 export async function saveManifest(items: PhotoManifestItem[]): Promise<void> {
-  // 按日期排序（最新的在前）
+  // Sort by date (newest first)
   const sortedManifest = [...items].sort(
     (a, b) => new Date(b.dateTaken).getTime() - new Date(a.dateTaken).getTime(),
   )
@@ -69,10 +69,10 @@ export async function saveManifest(items: PhotoManifestItem[]): Promise<void> {
     ),
   )
 
-  logger.fs.info(`📁 Manifest 保存至： ${manifestPath}`)
+  logger.fs.info(`📁 Manifest saved to: ${manifestPath}`)
 }
 
-// 检测并处理已删除的图片
+// Detect and process deleted images
 export async function handleDeletedPhotos(
   items: PhotoManifestItem[],
 ): Promise<number> {

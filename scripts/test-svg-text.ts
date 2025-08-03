@@ -13,7 +13,7 @@ async function generateTestImages() {
   const width = 1200
   const height = 630
 
-  // 测试文本
+  // Test text
   const testTexts = [
     'Afilmory',
     'Capturing beautiful moments in life, documenting daily warmth and emotions through my lens.',
@@ -41,6 +41,7 @@ async function generateTestImages() {
     })
     .join('')
 
+  // Generate SVG text rendering test image
   const svgTestImage = `
     <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -53,17 +54,17 @@ async function generateTestImages() {
       
       <rect width="100%" height="100%" fill="url(#bg)"/>
       
-      <!-- SVG 路径绘制的文字 -->
+      <!-- Text drawn with SVG paths -->
       ${svgTextPaths}
       
-      <!-- 标题 -->
+      <!-- Title -->
       <text x="60" y="40" font-family="Arial, sans-serif" font-size="24" fill="rgba(255,255,255,0.7)">
         SVG Path-based Helvetica Font Rendering (Linux Compatible)
       </text>
     </svg>
   `
 
-  // 生成传统字体渲染对比图片
+  // Generate traditional font rendering comparison image
   const traditionalTestImage = `
     <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -76,7 +77,7 @@ async function generateTestImages() {
       
       <rect width="100%" height="100%" fill="url(#bg)"/>
       
-      <!-- 传统字体渲染 -->
+      <!-- Traditional font rendering -->
       <text x="60" y="40" font-family="Arial, sans-serif" font-size="24" fill="rgba(255,255,255,0.7)">
         Traditional Font Rendering (May vary on different systems)
       </text>
@@ -116,13 +117,13 @@ async function generateTestImages() {
   `
 
   try {
-    // 生成 SVG 路径版本
+    // Generate SVG path version
     const svgBuffer = await sharp(Buffer.from(svgTestImage)).png().toBuffer()
     const svgPath = join(process.cwd(), 'public', 'test-svg-font-rendering.png')
     writeFileSync(svgPath, svgBuffer)
     console.info(`✅ SVG font test image generated: ${svgPath}`)
 
-    // 生成传统字体版本
+    // Generate traditional font version
     const traditionalBuffer = await sharp(Buffer.from(traditionalTestImage))
       .png()
       .toBuffer()
@@ -134,7 +135,7 @@ async function generateTestImages() {
     writeFileSync(traditionalPath, traditionalBuffer)
     console.info(`✅ Traditional font test image generated: ${traditionalPath}`)
 
-    // 测试文本测量功能
+    // Test text measurement function
     console.info('\n📏 Text measurement tests:')
     testTexts.forEach((text, index) => {
       const fontSize = index < 2 ? 48 : 32
@@ -146,7 +147,7 @@ async function generateTestImages() {
       )
     })
 
-    // 测试自动换行功能
+    // Test auto-wrap function
     console.info('\n📝 Text wrapping test:')
     const longText =
       'This is a very long text that should be wrapped automatically when it exceeds the maximum width limit that we have set for this test case.'
@@ -159,7 +160,7 @@ async function generateTestImages() {
   }
 }
 
-// 如果直接运行此脚本
+// If this script is run directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   generateTestImages().catch(console.error)
 }

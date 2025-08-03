@@ -1,75 +1,75 @@
 # Afilmory Builder
 
-这是照片库构建系统的核心模块，采用模块化设计，将不同功能分离到各自的模块中。
+This is the core module of the photo gallery build system, which adopts a modular design to separate different functions into their respective modules.
 
-## 架构概览
+## Architecture Overview
 
 ```
 src/core/
-├── types/          # 类型定义
-│   └── photo.ts    # 照片相关类型
-├── logger/         # 日志系统
-│   └── index.ts    # 统一日志器
-├── s3/             # S3 存储操作
-│   ├── client.ts   # S3 客户端配置
-│   └── operations.ts # S3 操作（上传、下载、列表）
-├── image/          # 图像处理
-│   ├── processor.ts # 图像预处理和元数据
-│   ├── blurhash.ts # Blurhash 生成
-│   ├── thumbnail.ts # 缩略图生成
-│   └── exif.ts     # EXIF 数据提取
-├── photo/          # 照片处理
-│   ├── info-extractor.ts # 照片信息提取
-│   └── processor.ts # 照片处理主逻辑
-├── manifest/       # Manifest 管理
-│   └── manager.ts  # Manifest 读写和管理
-├── worker/         # 并发处理
-│   └── pool.ts     # Worker 池管理
-├── builder/        # 主构建器
-│   └── index.ts    # 构建流程编排
-└── index.ts        # 模块入口
+├── types/          # Type definitions
+│   └── photo.ts    # Photo-related types
+├── logger/         # Logging system
+│   └── index.ts    # Unified logger
+├── s3/             # S3 storage operations
+│   ├── client.ts   # S3 client configuration
+│   └── operations.ts # S3 operations (upload, download, list)
+├── image/          # Image processing
+│   ├── processor.ts # Image preprocessing and metadata
+│   ├── blurhash.ts # Blurhash generation
+│   ├── thumbnail.ts # Thumbnail generation
+│   └── exif.ts     # EXIF data extraction
+├── photo/          # Photo processing
+│   ├── info-extractor.ts # Photo information extraction
+│   └── processor.ts # Main photo processing logic
+├── manifest/       # Manifest management
+│   └── manager.ts  # Manifest reading, writing, and management
+├── worker/         # Concurrent processing
+│   └── pool.ts     # Worker pool management
+├── builder/        # Main builder
+│   └── index.ts    # Build process orchestration
+└── index.ts        # Module entry point
 ```
 
-## 模块说明
+## Module Descriptions
 
-### 1. 类型定义 (`types/`)
-- `PhotoInfo`: 照片基本信息
-- `ImageMetadata`: 图像元数据
-- `PhotoManifestItem`: Manifest 项目
-- `ProcessPhotoResult`: 处理结果
-- `ThumbnailResult`: 缩略图生成结果
+### 1. Type Definitions (`types/`)
+- `PhotoInfo`: Basic photo information
+- `ImageMetadata`: Image metadata
+- `PhotoManifestItem`: Manifest item
+- `ProcessPhotoResult`: Processing result
+- `ThumbnailResult`: Thumbnail generation result
 
-### 2. 日志系统 (`logger/`)
-- 统一的日志管理
-- 支持不同模块的标签化日志
-- Worker 专用日志器
+### 2. Logging System (`logger/`)
+- Unified log management
+- Supports tagged logging for different modules
+- Dedicated logger for workers
 
-### 3. S3 存储操作 (`s3/`)
-- **client.ts**: S3 客户端配置和连接
-- **operations.ts**: 图片下载、列表获取、URL 生成
+### 3. S3 Storage Operations (`s3/`)
+- **client.ts**: S3 client configuration and connection
+- **operations.ts**: Image download, list retrieval, URL generation
 
-### 4. 图像处理 (`image/`)
-- **processor.ts**: 图像预处理、HEIC 转换、元数据提取
-- **blurhash.ts**: Blurhash 生成算法
-- **thumbnail.ts**: 缩略图生成和管理
-- **exif.ts**: EXIF 数据提取和清理
+### 4. Image Processing (`image/`)
+- **processor.ts**: Image preprocessing, HEIC conversion, metadata extraction
+- **blurhash.ts**: Blurhash generation algorithm
+- **thumbnail.ts**: Thumbnail generation and management
+- **exif.ts**: EXIF data extraction and cleaning
 
-### 5. 照片处理 (`photo/`)
-- **info-extractor.ts**: 从文件名和 EXIF 提取照片信息
-- **processor.ts**: 照片处理主流程，整合所有处理步骤
+### 5. Photo Processing (`photo/`)
+- **info-extractor.ts**: Extracts photo information from filenames and EXIF
+- **processor.ts**: Main photo processing flow, integrating all processing steps
 
-### 6. Manifest 管理 (`manifest/`)
-- **manager.ts**: Manifest 文件的读取、保存、更新检测
+### 6. Manifest Management (`manifest/`)
+- **manager.ts**: Reading, saving, and update detection of manifest files
 
-### 7. 并发处理 (`worker/`)
-- **pool.ts**: Worker 池管理，支持并发处理
+### 7. Concurrent Processing (`worker/`)
+- **pool.ts**: Worker pool management, supports concurrent processing
 
-### 8. 主构建器 (`builder/`)
-- **index.ts**: 整个构建流程的编排和协调
+### 8. Main Builder (`builder/`)
+- **index.ts**: Orchestration and coordination of the entire build process
 
-## 使用方式
+## Usage
 
-### 基本使用
+### Basic Usage
 ```typescript
 import { buildManifest } from './src/core/index.js'
 
@@ -81,7 +81,7 @@ await buildManifest({
 })
 ```
 
-### 单独使用模块
+### Using Modules Individually
 ```typescript
 import { 
   getImageFromS3, 
@@ -89,65 +89,65 @@ import {
   extractExifData 
 } from './src/core/index.js'
 
-// 下载图片
+// Download image
 const buffer = await getImageFromS3('path/to/image.jpg')
 
-// 生成缩略图
+// Generate thumbnail
 const result = await generateThumbnailAndBlurhash(buffer, 'photo-id', 1920, 1080)
 
-// 提取 EXIF
+// Extract EXIF
 const exif = await extractExifData(buffer)
 ```
 
-## 特性
+## Features
 
-### 1. 模块化设计
-- 每个功能模块独立，便于测试和维护
-- 清晰的依赖关系
-- 易于扩展新功能
+### 1. Modular Design
+- Each functional module is independent, which is convenient for testing and maintenance
+- Clear dependency relationships
+- Easy to extend with new features
 
-### 2. 类型安全
-- 完整的 TypeScript 类型定义
-- 编译时错误检查
+### 2. Type Safety
+- Complete TypeScript type definitions
+- Compile-time error checking
 
-### 3. 性能优化
-- Worker 池并发处理
-- Sharp 实例复用
-- 增量更新支持
+### 3. Performance Optimization
+- Worker pool for concurrent processing
+- Sharp instance reuse
+- Incremental update support
 
-### 4. 错误处理
-- 统一的错误处理机制
-- 详细的日志记录
-- 优雅的失败处理
+### 4. Error Handling
+- Unified error handling mechanism
+- Detailed logging
+- Graceful failure handling
 
-### 5. 配置灵活
-- 支持多种运行模式
-- 可配置的并发数
-- 环境变量配置
+### 5. Flexible Configuration
+- Supports multiple operating modes
+- Configurable concurrency
+- Environment variable configuration
 
-## 扩展指南
+## Extension Guide
 
-### 添加新的图像处理功能
-1. 在 `image/` 目录下创建新模块
-2. 在 `index.ts` 中导出新功能
-3. 在 `photo/processor.ts` 中集成
+### Adding New Image Processing Features
+1. Create a new module in the `image/` directory
+2. Export the new feature in `index.ts`
+3. Integrate it in `photo/processor.ts`
 
-### 添加新的存储后端
-1. 在 `s3/` 目录下创建新的操作模块
-2. 实现相同的接口
-3. 在配置中切换
+### Adding a New Storage Backend
+1. Create a new operations module in the `s3/` directory
+2. Implement the same interface
+3. Switch in the configuration
 
-### 自定义日志器
+### Custom Logger
 ```typescript
 import { logger } from './src/core/index.js'
 
 const customLogger = logger.worker(1).withTag('CUSTOM')
-customLogger.info('自定义日志')
+customLogger.info('Custom log')
 ```
 
-## 性能考虑
+## Performance Considerations
 
-- 使用 Worker 池避免过度并发
-- Sharp 实例复用减少内存开销
-- 增量更新减少不必要的处理
-- 缩略图和 Blurhash 缓存复用 
+- Use a worker pool to avoid excessive concurrency
+- Reuse Sharp instances to reduce memory overhead
+- Use incremental updates to reduce unnecessary processing
+- Reuse thumbnail and Blurhash cache

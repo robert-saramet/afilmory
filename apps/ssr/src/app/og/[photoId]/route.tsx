@@ -19,13 +19,13 @@ export const GET = async (
   }
 
   try {
-    // 格式化拍摄时间
+    // Format shooting time
     const dateTaken = photo.exif?.DateTimeOriginal || photo.lastModified
     const formattedDate = dateTaken
       ? new Date(dateTaken).toLocaleDateString('en-US')
       : ''
 
-    // 处理标签
+    // Process tags
     const tags = photo.tags?.slice(0, 3).join(' • ') || ''
 
     // Format EXIF information
@@ -62,40 +62,40 @@ export const GET = async (
       ).then((res) => res.arrayBuffer()),
     ])
 
-    // 计算图片显示尺寸以保持原始比例
+    // Calculate the image display size to maintain the original aspect ratio
     const imageWidth = photo.width || 1
     const imageHeight = photo.height || 1
     const aspectRatio = imageWidth / imageHeight
 
-    // 胶片框的最大尺寸
+    // Maximum size of the film frame
     const maxFrameWidth = 500
     const maxFrameHeight = 420
 
-    // 计算胶片框尺寸（保持图片比例）
+    // Calculate film frame size (maintaining image aspect ratio)
     let frameWidth = maxFrameWidth
     let frameHeight = maxFrameHeight
 
     if (aspectRatio > maxFrameWidth / maxFrameHeight) {
-      // 图片较宽，以宽度为准
+      // If the image is wider, use the width as the standard
       frameHeight = maxFrameWidth / aspectRatio
     } else {
-      // 图片较高，以高度为准
+      // If the image is taller, use the height as the standard
       frameWidth = maxFrameHeight * aspectRatio
     }
 
-    // 图片区域尺寸（减去胶片边框）
+    // Image area size (minus the film border)
     const imageAreaWidth = frameWidth - 70
     const imageAreaHeight = frameHeight - 70
 
-    // 计算实际图片显示尺寸
+    // Calculate the actual image display size
     let displayWidth = imageAreaWidth
     let displayHeight = imageAreaHeight
 
     if (aspectRatio > imageAreaWidth / imageAreaHeight) {
-      // 图片较宽，以宽度为准
+      // If the image is wider, use the width as the standard
       displayHeight = imageAreaWidth / aspectRatio
     } else {
-      // 图片较高，以高度为准
+      // If the image is taller, use the height as the standard
       displayWidth = imageAreaHeight * aspectRatio
     }
 
@@ -116,7 +116,7 @@ export const GET = async (
             position: 'relative',
           }}
         >
-          {/* 摄影师风格的网格背景 */}
+          {/* Photographer-style grid background */}
           <div
             style={{
               position: 'absolute',
@@ -133,7 +133,7 @@ export const GET = async (
             }}
           />
 
-          {/* 主光源效果 - 左上角 */}
+          {/* Main light source effect - top left */}
           <div
             style={{
               position: 'absolute',
@@ -147,7 +147,7 @@ export const GET = async (
             }}
           />
 
-          {/* 副光源效果 - 右下角 */}
+          {/* Secondary light source effect - bottom right */}
           <div
             style={{
               position: 'absolute',
@@ -161,7 +161,7 @@ export const GET = async (
             }}
           />
 
-          {/* 摄影工作室的聚光灯效果 */}
+          {/* Spotlight effect for a photography studio */}
           <div
             style={{
               position: 'absolute',
@@ -175,7 +175,7 @@ export const GET = async (
             }}
           />
 
-          {/* 胶片装饰元素 */}
+          {/* Film decoration elements */}
           <div
             style={{
               position: 'absolute',
@@ -192,7 +192,7 @@ export const GET = async (
               alignItems: 'center',
             }}
           >
-            {/* 胶片孔 */}
+            {/* Film perforations */}
             <div
               style={{
                 marginTop: '9px',
@@ -249,7 +249,7 @@ export const GET = async (
             />
           </div>
 
-          {/* 几何装饰线条 - 多个层次 */}
+          {/* Geometric decorative lines - multiple layers */}
           <div
             style={{
               position: 'absolute',
@@ -288,7 +288,7 @@ export const GET = async (
             }}
           />
 
-          {/* 光圈装饰 */}
+          {/* Aperture decoration */}
           <div
             style={{
               position: 'absolute',
@@ -303,7 +303,7 @@ export const GET = async (
               justifyContent: 'center',
             }}
           >
-            {/* 内圈 */}
+            {/* Inner circle */}
             <div
               style={{
                 width: '30px',
@@ -326,7 +326,7 @@ export const GET = async (
             </div>
           </div>
 
-          {/* 主要内容区域 */}
+          {/* Main content area */}
           <div
             style={{
               display: 'flex',
@@ -335,7 +335,7 @@ export const GET = async (
               maxWidth: '58%',
             }}
           >
-            {/* 标题 */}
+            {/* Title */}
             <h1
               style={{
                 fontSize: '80px',
@@ -350,7 +350,7 @@ export const GET = async (
               {photo.title || 'Untitled Photo'}
             </h1>
 
-            {/* 描述 */}
+            {/* Description */}
             <p
               style={{
                 fontSize: '36px',
@@ -365,7 +365,7 @@ export const GET = async (
               {photo.description || siteConfig.name || siteConfig.title}
             </p>
 
-            {/* 标签 */}
+            {/* Tags */}
             {tags && (
               <div
                 style={{
@@ -399,7 +399,7 @@ export const GET = async (
             )}
           </div>
 
-          {/* 照片缩略图 - 胶片风格 */}
+          {/* Photo thumbnail - film style */}
           {photo.thumbnailUrl && (
             <div
               style={{
@@ -418,7 +418,7 @@ export const GET = async (
                 overflow: 'hidden',
               }}
             >
-              {/* 胶片左边的孔洞 */}
+              {/* Perforations on the left side of the film */}
               <div
                 style={{
                   position: 'absolute',
@@ -435,7 +435,7 @@ export const GET = async (
                   paddingBottom: '25px',
                 }}
               >
-                {/* 胶片孔洞 - 更柔和的边缘 */}
+                {/* Film perforations - softer edges */}
                 <div
                   style={{
                     width: '10px',
@@ -508,7 +508,7 @@ export const GET = async (
                 />
               </div>
 
-              {/* 胶片右边的孔洞 */}
+              {/* Perforations on the right side of the film */}
               <div
                 style={{
                   position: 'absolute',
@@ -525,7 +525,7 @@ export const GET = async (
                   paddingBottom: '25px',
                 }}
               >
-                {/* 胶片孔洞 - 更柔和的边缘 */}
+                {/* Film perforations - softer edges */}
                 <div
                   style={{
                     width: '10px',
@@ -598,7 +598,7 @@ export const GET = async (
                 />
               </div>
 
-              {/* 胶片中间的照片区域 */}
+              {/* Photo area in the middle of the film */}
               <div
                 style={{
                   position: 'absolute',
@@ -636,7 +636,7 @@ export const GET = async (
                   />
                 </div>
 
-                {/* 胶片光泽效果 - 更柔和 */}
+                {/* Film gloss effect - softer */}
                 <div
                   style={{
                     position: 'absolute',
@@ -651,7 +651,7 @@ export const GET = async (
                 />
               </div>
 
-              {/* 胶片顶部和底部的纹理 - 更细腻 */}
+              {/* Texture on the top and bottom of the film - more delicate */}
               <div
                 style={{
                   position: 'absolute',
@@ -677,7 +677,7 @@ export const GET = async (
                 }}
               />
 
-              {/* 胶片编号 - 更自然的位置 */}
+              {/* Film number - more natural position */}
               <div
                 style={{
                   position: 'absolute',
@@ -693,7 +693,7 @@ export const GET = async (
                 {photoId.slice(-4).toUpperCase()}
               </div>
 
-              {/* 胶片质感的整体覆盖层 */}
+              {/* Overall overlay for a film texture */}
               <div
                 style={{
                   position: 'absolute',
@@ -709,7 +709,7 @@ export const GET = async (
             </div>
           )}
 
-          {/* 底部信息 */}
+          {/* Bottom information */}
           <div
             style={{
               display: 'flex',
@@ -718,7 +718,7 @@ export const GET = async (
               gap: '28px',
             }}
           >
-            {/* 拍摄时间 */}
+            {/* Shooting time */}
             {formattedDate && (
               <div
                 style={{
@@ -733,7 +733,7 @@ export const GET = async (
                 📸 {formattedDate}
               </div>
             )}
-            {/* 相机信息 */}
+            {/* Camera information */}
             {exifInfo?.camera && (
               <div
                 style={{
@@ -746,7 +746,7 @@ export const GET = async (
                 📷 {exifInfo.camera}
               </div>
             )}
-            {/* EXIF 信息 */}
+            {/* EXIF information */}
             {exifInfo &&
               (exifInfo.aperture ||
                 exifInfo.shutterSpeed ||

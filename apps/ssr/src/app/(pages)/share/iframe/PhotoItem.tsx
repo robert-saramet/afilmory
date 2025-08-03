@@ -25,18 +25,18 @@ interface PhotoItemProps {
 }
 
 export function PhotoItem({ photo, className }: PhotoItemProps) {
-  // 生成 thumbhash 预览
+  // Generate thumbhash preview
   const thumbHashDataURL = photo.thumbHash
     ? thumbHashToDataURL(decompressUint8Array(photo.thumbHash))
     : null
 
   const ratio = photo.aspectRatio
 
-  // 格式化 EXIF 数据
+  // Format EXIF data
   const formatExifData = () => {
     const { exif } = photo
 
-    // 安全处理：如果 exif 不存在或为空，则返回空对象
+    // Safety handling: return an empty object if exif is null or empty
     if (!exif) {
       return {
         focalLength35mm: null,
@@ -46,7 +46,7 @@ export function PhotoItem({ photo, className }: PhotoItemProps) {
       }
     }
 
-    // 等效焦距 (35mm)
+    // Equivalent focal length (35mm)
     const focalLength35mm = exif.FocalLengthIn35mmFormat
       ? Number.parseInt(exif.FocalLengthIn35mmFormat)
       : exif.FocalLength
@@ -56,11 +56,11 @@ export function PhotoItem({ photo, className }: PhotoItemProps) {
     // ISO
     const iso = exif.ISO
 
-    // 快门速度
+    // Shutter speed
     const exposureTime = exif.ExposureTime
     const shutterSpeed = exposureTime ? `${exposureTime}s` : null
 
-    // 光圈
+    // Aperture
     const aperture = exif.FNumber ? `f/${exif.FNumber}` : null
 
     return {
@@ -114,15 +114,15 @@ export function PhotoItem({ photo, className }: PhotoItemProps) {
         />
       </div>
 
-      {/* 图片信息和 EXIF 覆盖层 */}
+      {/* Image information and EXIF overlay */}
 
       <div className="@container pointer-events-none">
-        {/* 渐变背景 - 独立的层 */}
+        {/* Gradient background - separate layer */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-        {/* 内容层 - 独立的层以支持 backdrop-filter */}
+        {/* Content layer - separate layer to support backdrop-filter */}
         <div className="absolute inset-x-0 bottom-0 p-4 pb-0 text-white">
-          {/* 基本信息和标签 section */}
+          {/* Basic info and tags section */}
           <div className="mb-3 [&_*]:duration-300">
             <div className="items-center justify-between @[600px]:flex">
               <div>
@@ -136,7 +136,7 @@ export function PhotoItem({ photo, className }: PhotoItemProps) {
                 )}
               </div>
 
-              {/* 基本信息 */}
+              {/* Basic information */}
               <div>
                 <div className="mb-2 flex flex-wrap gap-2 text-xs text-white/80 opacity-0 group-hover:opacity-100">
                   <span>

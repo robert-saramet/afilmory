@@ -14,6 +14,9 @@ The goal is to translate all non-English text in the codebase to English and mov
 - Translated comments in the majority of files in `apps/web/src/components/`.
 - Internationalized hardcoded strings in `apps/web/src/pages/explory/index.tsx`.
 - Translated comments in `apps/web/src/lib/`.
+- Translated comments in `apps/ssr/`.
+- Translated comments in `scripts/`.
+- Started translating comments in `packages/`.
 
 ## Identified Issues
 
@@ -44,7 +47,7 @@ I have been encountering a recurring "search block not found" error when using t
 I have been re-reading the file using `read_files` before each use of `replace_with_git_merge_diff` to ensure the tool has the latest version of the file. This has been effective but has slowed down my progress.
 
 ## Next Steps
-- Continue translating comments in `apps/web/src/pages/(data)/manifest.tsx`.
-- Complete translation of all remaining files in `apps/web/src/pages/`.
+- Continue translating comments in the `packages/` directory.
+- Complete translation of all remaining files.
 - Proceed with the rest of the plan, including translating documentation and running tests.
 - Submit the changes for review.

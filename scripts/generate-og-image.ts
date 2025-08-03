@@ -6,11 +6,11 @@ import sharp from 'sharp'
 import { buildTimePhotoLoader } from './photo-loader.js'
 import { renderSVGText, wrapSVGText } from './svg-text-renderer.js'
 
-// 获取最新的照片
+// Get the latest photos
 async function getLatestPhotos(count = 4) {
   const photos = buildTimePhotoLoader.getPhotos()
 
-  // 按拍摄时间排序，获取最新的照片
+  // Sort by shooting time to get the latest photos
   const sortedPhotos = photos.sort((a, b) => {
     if (
       !a?.exif?.Photo?.DateTimeOriginal ||
@@ -29,10 +29,10 @@ async function getLatestPhotos(count = 4) {
   return sortedPhotos.slice(0, count)
 }
 
-// 下载并处理照片缩略图
+// Download and process photo thumbnails
 async function downloadAndProcessThumbnail(thumbnailUrl: string, size = 150) {
   try {
-    // 如果是本地路径，直接读取
+    // If it is a local path, read it directly
     if (thumbnailUrl.startsWith('/')) {
       const localPath = join(process.cwd(), 'public', thumbnailUrl)
       if (existsSync(localPath)) {
@@ -43,7 +43,7 @@ async function downloadAndProcessThumbnail(thumbnailUrl: string, size = 150) {
       }
     }
 
-    // 如果是 URL，需要下载（这里先返回 null，后面可以添加网络下载功能）
+    // If it is a URL, it needs to be downloaded (return null for now, network download function can be added later)
     console.warn(`Cannot download thumbnail from URL: ${thumbnailUrl}`)
     return null
   } catch (error) {
@@ -52,18 +52,18 @@ async function downloadAndProcessThumbnail(thumbnailUrl: string, size = 150) {
   }
 }
 
-// 创建带特效的照片（旋转、阴影、边框）
+// Create a photo with special effects (rotation, shadow, border)
 async function createPhotoWithEffects(
   imageBuffer: Buffer,
   size: number,
   rotation: number,
 ) {
   try {
-    // 计算旋转后需要的画布大小
+    // Calculate the required canvas size after rotation
     const diagonal = Math.ceil(size * Math.sqrt(2))
-    const canvasSize = diagonal + 40 // 额外空间用于阴影
+    const canvasSize = diagonal + 40 // Extra space for shadow
 
-    // 创建阴影效果的 SVG
+    // Create an SVG with a shadow effect
     const shadowSvg = `
       <svg width="${canvasSize}" height="${canvasSize}" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -78,10 +78,10 @@ async function createPhotoWithEffects(
       </svg>
     `
 
-    // 创建阴影层
+    // Create a shadow layer
     const shadowBuffer = await sharp(Buffer.from(shadowSvg)).png().toBuffer()
 
-    // 处理原图片：添加浅灰色边框并旋转（适配黑色主题）
+    // Process the original image: add a light gray border and rotate (adapter for dark theme)
     const photoWithBorder = await sharp(imageBuffer)
       .extend({
         top: 6,
@@ -93,7 +93,7 @@ async function createPhotoWithEffects(
       .png()
       .toBuffer()
 
-    // 创建最终画布
+    // Create the final canvas
     const canvas = sharp({
       create: {
         width: canvasSize,
@@ -103,11 +103,11 @@ async function createPhotoWithEffects(
       },
     })
 
-    // 计算照片在画布中的位置
+    // Calculate the position of the photo on the canvas
     const photoX = (canvasSize - size - 12) / 2
     const photoY = (canvasSize - size - 12) / 2
 
-    // 合成阴影和照片
+    // Composite the shadow and the photo
     const result = await canvas
       .composite([
         { input: shadowBuffer, top: 0, left: 0 },
@@ -120,14 +120,14 @@ async function createPhotoWithEffects(
       .png()
       .toBuffer()
 
-    // 旋转整个图像
+    // Rotate the entire image
     return await sharp(result)
       .rotate(rotation, { background: { r: 0, g: 0, b: 0, alpha: 0 } })
       .png()
       .toBuffer()
   } catch (error) {
     console.warn('Failed to create photo with effects:', error)
-    // 如果特效失败，返回简单的边框版本（适配黑色主题）
+    // If the special effects fail, return a simple bordered version (for dark theme)
     return await sharp(imageBuffer)
       .extend({
         top: 4,
@@ -162,7 +162,7 @@ export async function generateOGImage(options: OGImageOptions) {
     photoCount = 4,
   } = options
 
-  // 确保输出目录存在
+  // Ensure the output directory exists
   const outputDir = join(process.cwd(), 'public')
   if (!existsSync(outputDir)) {
     mkdirSync(outputDir, { recursive: true })
@@ -172,11 +172,11 @@ export async function generateOGImage(options: OGImageOptions) {
     let finalImage: sharp.Sharp
 
     if (includePhotos) {
-      // 获取最新照片
+      // Get latest photos
       const latestPhotos = await getLatestPhotos(photoCount)
       console.info(`📸 Found ${latestPhotos.length} latest photos`)
 
-      // 创建基础画布 - 黑色主题
+      // Create a basic canvas - dark theme
       const canvas = sharp({
         create: {
           width,
@@ -186,7 +186,7 @@ export async function generateOGImage(options: OGImageOptions) {
         },
       })
 
-      // 创建现代黑色主题渐变背景
+      // Create a modern dark theme gradient background
       const gradientSvg = `
         <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -213,7 +213,7 @@ export async function generateOGImage(options: OGImageOptions) {
         .png()
         .toBuffer()
 
-      // 创建文字层 - 使用 SVG 路径绘制 Helvetica 风格字体
+      // Create a text layer - use SVG paths to draw Helvetica-style fonts
       const wrappedTitle = wrapSVGText(title, width - 120, {
         fontSize: 48,
         fontWeight: 'bold',
@@ -252,17 +252,17 @@ export async function generateOGImage(options: OGImageOptions) {
 
       const textBuffer = await sharp(Buffer.from(textSvg)).png().toBuffer()
 
-      // 准备合成图层
+      // Prepare composite layers
       const composite: sharp.OverlayOptions[] = [
         { input: gradientBuffer, top: 0, left: 0 },
         { input: textBuffer, top: 0, left: 0 },
       ]
 
-      // 处理照片缩略图 - 创建倾斜叠加效果
+      // Process photo thumbnails - create a tilted overlay effect
       const photoSize = 160
       const baseX = 580
-      const baseY = 200 // 往下移动 50px
-      const rotations = [-12, 5, -8, 10] // 每张照片的旋转角度
+      const baseY = 200 // Move down 50px
+      const rotations = [-12, 5, -8, 10] // Rotation angle for each photo
       const offsets = [
         { x: 0, y: 20 },
         { x: 90, y: 60 },
@@ -284,7 +284,7 @@ export async function generateOGImage(options: OGImageOptions) {
           const x = baseX + offset.x
           const y = baseY + offset.y
 
-          // 创建带阴影和边框的照片
+          // Create a photo with a shadow and border
           const photoWithEffects = await createPhotoWithEffects(
             thumbnailBuffer,
             photoSize,
@@ -303,10 +303,10 @@ export async function generateOGImage(options: OGImageOptions) {
         }
       }
 
-      // 合成最终图像
+      // Composite the final image
       finalImage = canvas.composite(composite)
     } else {
-      // 不包含照片的简单版本 - 黑色主题，使用 SVG 路径绘制字体
+      // Simple version without photos - dark theme, using SVG paths to draw fonts
       const simpleWrappedTitle = wrapSVGText(title, width - 120, {
         fontSize: 72,
         fontWeight: 'bold',
@@ -374,10 +374,10 @@ export async function generateOGImage(options: OGImageOptions) {
       finalImage = sharp(Buffer.from(svgContent))
     }
 
-    // 生成最终图片
+    // Generate the final image
     const buffer = await finalImage.png().toBuffer()
 
-    // 写入文件
+    // Write to file
     const fullOutputPath = join(outputDir, outputPath)
     writeFileSync(fullOutputPath, buffer)
 

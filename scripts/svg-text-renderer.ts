@@ -1,5 +1,5 @@
-// SVG 文本渲染器 - 基于真实 Helvetica 字体提取的字形
-// 自动生成，请勿手动编辑
+// SVG text renderer - based on glyphs extracted from a real Helvetica font
+// Auto-generated, do not edit manually
 
 interface CharacterPath {
   path: string

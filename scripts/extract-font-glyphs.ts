@@ -11,7 +11,7 @@ interface GlyphData {
   advanceWidth: number
 }
 
-// 常用字符集
+// Common character set
 const CHARACTERS = [
   'A',
   'B',
@@ -107,7 +107,7 @@ const CHARACTERS = [
   '}',
 ]
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
-// 常见的无衬线字体路径（优先使用 TTF 格式）
+// Common sans-serif font paths (TTF format is preferred)
 const HELVETICA_FONT_PATHS = [
   join(__dirname, './SF-Pro-Display-Medium.ttf'),
   '/System/Library/Fonts/SFCompact.ttf',
@@ -238,8 +238,8 @@ function generateSVGTextRenderer(glyphs: Record<string, GlyphData>): string {
     })
     .join(',\n')
 
-  return `// SVG 文本渲染器 - 基于真实 Helvetica 字体提取的字形
-// 自动生成，请勿手动编辑
+  return `// SVG text renderer - based on glyphs extracted from a real Helvetica font
+// Auto-generated, do not edit manually
 
 interface CharacterPath {
   path: string

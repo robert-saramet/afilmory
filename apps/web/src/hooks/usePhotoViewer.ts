@@ -11,19 +11,19 @@ const currentIndexAtom = atom(0)
 const triggerElementAtom = atom<HTMLElement | null>(null)
 const data = photoLoader.getPhotos()
 
-// 抽取照片筛选和排序逻辑为独立函数
+// Extract photo filtering and sorting logic into a separate function
 const filterAndSortPhotos = (
   selectedTags: string[],
   sortOrder: 'asc' | 'desc',
 ) => {
-  // 首先根据 tags 筛选（包括显示标签和设备标签）
+  // First filter by tags (including display tags and equipment tags)
   let filteredPhotos = data
   if (selectedTags.length > 0) {
     filteredPhotos = data.filter((photo) =>
       selectedTags.some((tag) => {
-        // 检查显示标签
+        // Check display tags
         if (photo.tags.includes(tag)) return true
-        // 检查设备标签
+        // Check equipment tags
         if (photo.equipmentTags && photo.equipmentTags.includes(tag))
           return true
         return false
@@ -31,7 +31,7 @@ const filterAndSortPhotos = (
     )
   }
 
-  // 然后排序
+  // Then sort
   const sortedPhotos = filteredPhotos.toSorted((a, b) => {
     let aDateStr = ''
     let bDateStr = ''
@@ -56,9 +56,9 @@ const filterAndSortPhotos = (
   return sortedPhotos
 }
 
-// 提供一个 getter 函数供非 UI 组件使用
+// Provide a getter function for non-UI components to use
 export const getFilteredPhotos = () => {
-  // 直接从 jotaiStore 中读取当前状态
+  // Read the current state directly from jotaiStore
   const currentGallerySetting = jotaiStore.get(gallerySettingAtom)
   return filterAndSortPhotos(
     currentGallerySetting.selectedTags,
@@ -90,7 +90,7 @@ export const usePhotoViewer = () => {
       setCurrentIndex(index)
       setTriggerElement(element || null)
       setIsOpen(true)
-      // 防止背景滚动
+      // Prevent background scrolling
       document.body.style.overflow = 'hidden'
 
       trackView(id)
@@ -101,7 +101,7 @@ export const usePhotoViewer = () => {
   const closeViewer = useCallback(() => {
     setIsOpen(false)
     setTriggerElement(null)
-    // 恢复背景滚动
+    // Restore background scrolling
     document.body.style.overflow = ''
   }, [setIsOpen, setTriggerElement])
 

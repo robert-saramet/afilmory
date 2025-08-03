@@ -14,7 +14,7 @@ export async function cleanupOldOGImages(keepCount = 3) {
     const files = await readdir(publicDir)
     const ogImageFiles: FileInfo[] = []
 
-    // 找到所有 OG 图片文件
+    // Find all OG image files
     for (const file of files) {
       if (file.startsWith('og-image-') && file.endsWith('.png')) {
         const filePath = join(publicDir, file)
@@ -27,10 +27,10 @@ export async function cleanupOldOGImages(keepCount = 3) {
       }
     }
 
-    // 按修改时间排序（最新的在前）
+    // Sort by modification time (newest first)
     ogImageFiles.sort((a, b) => b.mtime.getTime() - a.mtime.getTime())
 
-    // 删除多余的文件
+    // Delete extra files
     const filesToDelete = ogImageFiles.slice(keepCount)
 
     for (const file of filesToDelete) {
@@ -51,7 +51,7 @@ export async function cleanupOldOGImages(keepCount = 3) {
   }
 }
 
-// 如果直接运行此脚本
+// If this script is run directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   cleanupOldOGImages().catch(console.error)
 }

@@ -15,14 +15,14 @@ import { workdir } from './path.js'
 import { runAsWorker } from './runAsWorker.js'
 
 /**
- * 推送更新后的 manifest 到远程仓库
+ * Push the updated manifest to the remote repository
  */
 async function pushManifestToRemoteRepo(): Promise<boolean> {
   if (!builderConfig.repo.enable || !builderConfig.repo.token) {
     if (!builderConfig.repo.enable) {
-      logger.main.info('🔧 远程仓库未启用，跳过推送')
+      logger.main.info('🔧 Remote repository is not enabled, skipping push')
     } else {
-      logger.main.warn('⚠️ 未提供 Git Token，跳过推送到远程仓库')
+      logger.main.warn('⚠️ Git Token not provided, skipping push to remote repository')
     }
     return false
   }
@@ -31,22 +31,22 @@ async function pushManifestToRemoteRepo(): Promise<boolean> {
     const assetsGitDir = path.resolve(workdir, 'assets-git')
 
     if (!existsSync(assetsGitDir)) {
-      logger.main.error('❌ assets-git 目录不存在，无法推送')
+      logger.main.error('❌ assets-git directory not found, cannot push')
       return false
     }
 
-    logger.main.info('📤 开始推送更新到远程仓库...')
+    logger.main.info('📤 Starting to push updates to the remote repository...')
 
-    // 配置 Git 用户身份（特别是在 CI 环境中）
+    // Configure Git user identity (especially in a CI environment)
     try {
-      // 检查是否已配置用户身份
+      // Check if user identity is already configured
       await $({
         cwd: assetsGitDir,
         stdio: 'pipe',
       })`git config user.name`
     } catch {
-      // 如果没有配置，则设置默认的 CI 用户身份
-      logger.main.info('🔧 配置 Git 用户身份（CI 环境）...')
+      // If not configured, set the default CI user identity
+      logger.main.info('🔧 Configuring Git user identity (CI environment)...')
       await $({
         cwd: assetsGitDir,
         stdio: 'pipe',
@@ -57,66 +57,66 @@ async function pushManifestToRemoteRepo(): Promise<boolean> {
       })`git config user.name "Afilmory CI"`
     }
 
-    // 检查是否有变更
+    // Check for changes
     const status = await $({
       cwd: assetsGitDir,
       stdio: 'pipe',
     })`git status --porcelain`
 
     if (!status.stdout.trim()) {
-      logger.main.info('💡 没有变更需要推送')
+      logger.main.info('💡 No changes to push')
       return false
     }
 
-    logger.main.info('📋 检测到以下变更：')
+    logger.main.info('📋 Detected the following changes:')
     logger.main.info(status.stdout)
 
-    // 配置 git 凭据
+    // Configure git credentials
     const repoUrl = builderConfig.repo.url
     const { token } = builderConfig.repo
 
-    // 解析仓库 URL，添加 token
+    // Parse the repository URL and add the token
     let authenticatedUrl = repoUrl
     if (repoUrl.startsWith('https://github.com/')) {
       const urlWithoutProtocol = repoUrl.replace('https://', '')
       authenticatedUrl = `https://${token}@${urlWithoutProtocol}`
     }
 
-    // 设置远程仓库 URL（包含 token）
+    // Set the remote repository URL (including the token)
     await $({
       cwd: assetsGitDir,
       stdio: 'pipe',
     })`git remote set-url origin ${authenticatedUrl}`
 
-    // 添加所有变更
+    // Add all changes
     await $({
       cwd: assetsGitDir,
       stdio: 'inherit',
     })`git add .`
 
-    // 提交变更
+    // Commit changes
     const commitMessage = `chore: update photos-manifest.json and thumbnails - ${new Date().toISOString()}`
     await $({
       cwd: assetsGitDir,
       stdio: 'inherit',
     })`git commit -m ${commitMessage}`
 
-    // 推送到远程仓库
+    // Push to the remote repository
     await $({
       cwd: assetsGitDir,
       stdio: 'inherit',
     })`git push origin HEAD`
 
-    logger.main.success('✅ 成功推送更新到远程仓库')
+    logger.main.success('✅ Successfully pushed updates to the remote repository')
     return true
   } catch (error) {
-    logger.main.error('❌ 推送到远程仓库失败：', error)
+    logger.main.error('❌ Failed to push to the remote repository:', error)
     return false
   }
 }
 
 async function main() {
-  // 检查是否作为 cluster worker 运行
+  // Check if running as a cluster worker
   if (
     process.env.CLUSTER_WORKER === 'true' ||
     process.argv.includes('--cluster-worker') ||
@@ -126,12 +126,12 @@ async function main() {
     return
   }
 
-  // 如果配置了远程仓库，则使用远程仓库
+  // If a remote repository is configured, use it
   if (builderConfig.repo.enable) {
-    // 拉取远程仓库
-    logger.main.info('🔄 同步远程仓库...')
+    // Pull from the remote repository
+    logger.main.info('🔄 Synchronizing remote repository...')
 
-    // 解析仓库 URL，添加 token
+    // Parse the repository URL and add the token
     let repoUrl = builderConfig.repo.url
     const { token } = builderConfig.repo
     if (token && repoUrl.startsWith('https://github.com/')) {
@@ -141,23 +141,23 @@ async function main() {
 
     const hasExist = existsSync(path.resolve(workdir, 'assets-git'))
     if (!hasExist) {
-      logger.main.info('📥 克隆远程仓库...')
+      logger.main.info('📥 Cloning remote repository...')
       await $({
         cwd: workdir,
         stdio: 'inherit',
       })`git clone ${repoUrl} assets-git`
     } else {
-      logger.main.info('🔄 拉取远程仓库更新...')
+      logger.main.info('🔄 Pulling updates from the remote repository...')
       try {
         await $({
           cwd: path.resolve(workdir, 'assets-git'),
           stdio: 'inherit',
         })`git pull --rebase`
       } catch {
-        logger.main.warn('⚠️ git pull 失败，尝试重置远程仓库...')
-        logger.main.info('🗑️ 删除现有仓库目录...')
+        logger.main.warn('⚠️ git pull failed, trying to reset the remote repository...')
+        logger.main.info('🗑️ Deleting the existing repository directory...')
         await $({ cwd: workdir, stdio: 'inherit' })`rm -rf assets-git`
-        logger.main.info('📥 重新克隆远程仓库...')
+        logger.main.info('📥 Re-cloning the remote repository...')
         await $({
           cwd: workdir,
           stdio: 'inherit',
@@ -165,7 +165,7 @@ async function main() {
       }
     }
 
-    // 确保远程仓库有必要的目录和文件
+    // Ensure the remote repository has the necessary directories and files
     const assetsGitDir = path.resolve(workdir, 'assets-git')
     const thumbnailsSourceDir = path.resolve(assetsGitDir, 'thumbnails')
     const manifestSourcePath = path.resolve(
@@ -173,22 +173,22 @@ async function main() {
       'photos-manifest.json',
     )
 
-    // 创建 thumbnails 目录（如果不存在）
+    // Create the thumbnails directory (if it doesn't exist)
     if (!existsSync(thumbnailsSourceDir)) {
-      logger.main.info('📁 创建 thumbnails 目录...')
+      logger.main.info('📁 Creating thumbnails directory...')
       await $({ cwd: assetsGitDir, stdio: 'inherit' })`mkdir -p thumbnails`
     }
 
-    // 创建空的 manifest 文件（如果不存在）
+    // Create an empty manifest file (if it doesn't exist)
     if (!existsSync(manifestSourcePath)) {
-      logger.main.info('📄 创建初始 manifest 文件...')
+      logger.main.info('📄 Creating initial manifest file...')
       await $({
         cwd: assetsGitDir,
         stdio: 'inherit',
       })`echo '{"version":"v2","data":[]}' > photos-manifest.json`
     }
 
-    // 删除 public/thumbnails 目录，并建立软连接到 assets-git/thumbnails
+    // Delete the public/thumbnails directory and create a symbolic link to assets-git/thumbnails
     const thumbnailsDir = path.resolve(workdir, 'public', 'thumbnails')
     if (existsSync(thumbnailsDir)) {
       await $({ cwd: workdir, stdio: 'inherit' })`rm -rf ${thumbnailsDir}`
@@ -198,7 +198,7 @@ async function main() {
       stdio: 'inherit',
     })`ln -s ${thumbnailsSourceDir} ${thumbnailsDir}`
 
-    // 删除 src/data/photos-manifest.json，并建立软连接到 assets-git/photos-manifest.json
+    // Delete src/data/photos-manifest.json and create a symbolic link to assets-git/photos-manifest.json
     const photosManifestPath = path.resolve(
       workdir,
       'src',
@@ -213,126 +213,126 @@ async function main() {
       stdio: 'inherit',
     })`ln -s ${manifestSourcePath} ${photosManifestPath}`
 
-    logger.main.success('✅ 远程仓库同步完成')
+    logger.main.success('✅ Remote repository synchronized successfully')
   }
 
   process.title = 'photo-gallery-builder-main'
 
-  // 解析命令行参数
+  // Parse command-line arguments
   const args = new Set(process.argv.slice(2))
   const isForceMode = args.has('--force')
   const isForceManifest = args.has('--force-manifest')
   const isForceThumbnails = args.has('--force-thumbnails')
 
-  // 显示帮助信息
+  // Show help message
   if (args.has('--help') || args.has('-h')) {
     logger.main.info(`
-照片库构建工具 (新版本 - 使用适配器模式)
+Photo Gallery Builder (New version - using adapter pattern)
 
-用法：tsx src/core/cli.ts [选项]
+Usage: tsx src/core/cli.ts [options]
 
-选项：
-  --force              强制重新处理所有照片
-  --force-manifest     强制重新生成 manifest
-  --force-thumbnails   强制重新生成缩略图
-  --config             显示当前配置信息
-  --help, -h          显示帮助信息
+Options:
+  --force              Force re-processing of all photos
+  --force-manifest     Force re-generation of the manifest
+  --force-thumbnails   Force re-generation of thumbnails
+  --config             Show current configuration information
+  --help, -h          Show help message
 
-示例：
-  tsx src/core/cli.ts                           # 增量更新
-  tsx src/core/cli.ts --force                   # 全量更新
-  tsx src/core/cli.ts --force-thumbnails        # 强制重新生成缩略图
-  tsx src/core/cli.ts --config                  # 显示配置信息
+Example:
+  tsx src/core/cli.ts                           # Incremental update
+  tsx src/core/cli.ts --force                   # Full update
+  tsx src/core/cli.ts --force-thumbnails        # Force re-generation of thumbnails
+  tsx src/core/cli.ts --config                  # Show configuration information
 
-配置：
-  在 builder.config.ts 中设置 performance.worker.useClusterMode = true 
-  可启用多进程集群模式，发挥多核心优势。
+Configuration:
+  Set performance.worker.useClusterMode = true in builder.config.ts
+  to enable multi-process cluster mode and leverage multi-core advantages.
 
-远程仓库：
-  如果启用了远程仓库 (repo.enable = true)，构建完成后会自动推送更新。
-  需要配置 repo.token 或设置 GIT_TOKEN 环境变量以提供推送权限。
-  如果没有提供 token，将跳过推送步骤。
+Remote repository:
+  If the remote repository is enabled (repo.enable = true), updates will be automatically pushed after the build is complete.
+  You need to configure repo.token or set the GIT_TOKEN environment variable to provide push permissions.
+  If no token is provided, the push step will be skipped.
 `)
     return
   }
 
-  // 显示配置信息
+  // Show configuration information
   if (args.has('--config')) {
     const config = defaultBuilder.getConfig()
-    logger.main.info('🔧 当前配置：')
-    logger.main.info(`   存储提供商：${config.storage.provider}`)
+    logger.main.info('🔧 Current configuration:')
+    logger.main.info(`   Storage provider: ${config.storage.provider}`)
 
     switch (config.storage.provider) {
       case 's3': {
-        logger.main.info(`   存储桶：${config.storage.bucket}`)
-        logger.main.info(`   区域：${config.storage.region || '未设置'}`)
-        logger.main.info(`   端点：${config.storage.endpoint || '默认'}`)
+        logger.main.info(`   Bucket: ${config.storage.bucket}`)
+        logger.main.info(`   Region: ${config.storage.region || 'Not set'}`)
+        logger.main.info(`   Endpoint: ${config.storage.endpoint || 'Default'}`)
         logger.main.info(
-          `   自定义域名：${config.storage.customDomain || '未设置'}`,
+          `   Custom domain: ${config.storage.customDomain || 'Not set'}`,
         )
-        logger.main.info(`   前缀：${config.storage.prefix || '无'}`)
+        logger.main.info(`   Prefix: ${config.storage.prefix || 'None'}`)
         break
       }
       case 'github': {
-        logger.main.info(`   仓库所有者：${config.storage.owner}`)
-        logger.main.info(`   仓库名称：${config.storage.repo}`)
-        logger.main.info(`   分支：${config.storage.branch || 'main'}`)
-        logger.main.info(`   路径：${config.storage.path || '无'}`)
-        logger.main.info(`   使用原始 URL：${config.storage.useRawUrl || '否'}`)
+        logger.main.info(`   Repository owner: ${config.storage.owner}`)
+        logger.main.info(`   Repository name: ${config.storage.repo}`)
+        logger.main.info(`   Branch: ${config.storage.branch || 'main'}`)
+        logger.main.info(`   Path: ${config.storage.path || 'None'}`)
+        logger.main.info(`   Use raw URL: ${config.storage.useRawUrl || 'No'}`)
         break
       }
     }
-    logger.main.info(`   默认并发数：${config.options.defaultConcurrency}`)
+    logger.main.info(`   Default concurrency: ${config.options.defaultConcurrency}`)
     logger.main.info(
-      `   Live Photo 检测：${config.options.enableLivePhotoDetection ? '启用' : '禁用'}`,
+      `   Live Photo detection: ${config.options.enableLivePhotoDetection ? 'Enabled' : 'Disabled'}`,
     )
     logger.main.info(
-      `   照片后缀摘要长度：${config.options.digestSuffixLength}`,
+      `   Photo suffix digest length: ${config.options.digestSuffixLength}`,
     )
-    logger.main.info(`   Worker 数：${config.performance.worker.workerCount}`)
-    logger.main.info(`   Worker 超时：${config.performance.worker.timeout}ms`)
+    logger.main.info(`   Worker count: ${config.performance.worker.workerCount}`)
+    logger.main.info(`   Worker timeout: ${config.performance.worker.timeout}ms`)
     logger.main.info(
-      `   集群模式：${config.performance.worker.useClusterMode ? '启用' : '禁用'}`,
+      `   Cluster mode: ${config.performance.worker.useClusterMode ? 'Enabled' : 'Disabled'}`,
     )
     logger.main.info('')
-    logger.main.info('📦 远程仓库配置：')
-    logger.main.info(`   启用状态：${config.repo.enable ? '启用' : '禁用'}`)
+    logger.main.info('📦 Remote repository configuration:')
+    logger.main.info(`   Enabled status: ${config.repo.enable ? 'Enabled' : 'Disabled'}`)
     if (config.repo.enable) {
-      logger.main.info(`   仓库地址：${config.repo.url || '未设置'}`)
+      logger.main.info(`   Repository address: ${config.repo.url || 'Not set'}`)
       logger.main.info(
-        `   推送权限：${config.repo.token ? '已配置' : '未配置'}`,
+        `   Push permission: ${config.repo.token ? 'Configured' : 'Not configured'}`,
       )
     }
     return
   }
 
-  // 确定运行模式
-  let runMode = '增量更新'
+  // Determine the run mode
+  let runMode = 'Incremental update'
   if (isForceMode) {
-    runMode = '全量更新'
+    runMode = 'Full update'
   } else if (isForceManifest && isForceThumbnails) {
-    runMode = '强制刷新 manifest 和缩略图'
+    runMode = 'Force refresh of manifest and thumbnails'
   } else if (isForceManifest) {
-    runMode = '强制刷新 manifest'
+    runMode = 'Force refresh of manifest'
   } else if (isForceThumbnails) {
-    runMode = '强制刷新缩略图'
+    runMode = 'Force refresh of thumbnails'
   }
 
   const config = defaultBuilder.getConfig()
   const concurrencyLimit = config.performance.worker.workerCount
   const finalConcurrency = concurrencyLimit ?? config.options.defaultConcurrency
   const processingMode = config.performance.worker.useClusterMode
-    ? '多进程集群'
-    : '并发线程池'
+    ? 'Multi-process cluster'
+    : 'Concurrent thread pool'
 
-  logger.main.info(`🚀 运行模式：${runMode}`)
-  logger.main.info(`⚡ 最大并发数：${finalConcurrency}`)
-  logger.main.info(`🔧 处理模式：${processingMode}`)
-  logger.main.info(`🏗️ 使用构建器：PhotoGalleryBuilder (适配器模式)`)
+  logger.main.info(`🚀 Run mode: ${runMode}`)
+  logger.main.info(`⚡ Max concurrency: ${finalConcurrency}`)
+  logger.main.info(`🔧 Processing mode: ${processingMode}`)
+  logger.main.info(`🏗️ Using builder: PhotoGalleryBuilder (Adapter Pattern)`)
 
   environmentCheck()
 
-  // 启动构建过程
+  // Start the build process
   const buildResult = await defaultBuilder.buildManifest({
     isForceMode,
     isForceManifest,
@@ -340,13 +340,13 @@ async function main() {
     concurrencyLimit,
   })
 
-  // 如果启用了远程仓库，在构建完成后推送更新
+  // If the remote repository is enabled, push updates after the build is complete
   if (builderConfig.repo.enable) {
     if (buildResult.hasUpdates) {
-      logger.main.info('🔄 检测到更新，推送到远程仓库...')
+      logger.main.info('🔄 Detected updates, pushing to the remote repository...')
       await pushManifestToRemoteRepo()
     } else {
-      logger.main.info('💡 没有更新需要推送到远程仓库')
+      logger.main.info('💡 No updates to push to the remote repository')
     }
   }
 
@@ -354,9 +354,9 @@ async function main() {
   process.exit(0)
 }
 
-// 运行主函数
+// Run the main function
 main().catch((error) => {
-  logger.main.error('构建失败：', error)
+  logger.main.error('Build failed:', error)
   throw error
 })
 
@@ -364,10 +364,10 @@ function environmentCheck() {
   try {
     execSync('perl -v', { stdio: 'ignore' })
 
-    logger.main.info('Perl 已安装')
+    logger.main.info('Perl is installed')
   } catch (err) {
     console.error(err)
-    logger.main.error('Perl 未安装，请安装 Perl 并重新运行')
+    logger.main.error('Perl is not installed, please install Perl and run again')
     // eslint-disable-next-line unicorn/no-process-exit
     process.exit(1)
   }

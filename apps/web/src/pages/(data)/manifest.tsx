@@ -162,7 +162,7 @@ const PhotoCard = ({ photo, index }: { photo: any; index: number }) => (
             </div>
           </div>
 
-          {/* 标签 */}
+          {/* Tags */}
           {photo.tags && photo.tags.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-2">
               {photo.tags.slice(0, 3).map((tag: string, tagIndex: number) => (
@@ -196,7 +196,7 @@ export const Component = () => {
     data: photos,
   }
 
-  // 搜索过滤
+  // Search filter
   const filteredPhotos = useMemo(() => {
     if (!searchTerm) return photos
 
@@ -227,7 +227,7 @@ export const Component = () => {
 
   return (
     <div className="min-h-screen bg-black">
-      {/* 背景渐变 */}
+      {/* Background gradient */}
       <div className="fixed inset-0 bg-gradient-to-br from-zinc-900 via-black to-zinc-900" />
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-transparent to-transparent" />
 
@@ -294,7 +294,7 @@ export const Component = () => {
         <div className="relative mx-auto max-w-7xl px-6 py-8">
           {viewMode === 'stats' ? (
             <div className="space-y-8">
-              {/* 统计信息 */}
+              {/* Statistics */}
               <div>
                 <h2 className="mb-6 text-lg font-medium text-zinc-300">
                   Overview
@@ -302,7 +302,7 @@ export const Component = () => {
                 <ManifestStats data={filteredPhotos} />
               </div>
 
-              {/* 照片列表 */}
+              {/* Photo list */}
               <div>
                 <div className="mb-6 flex items-center justify-between">
                   <h2 className="text-lg font-medium text-zinc-300">
@@ -325,7 +325,7 @@ export const Component = () => {
               </div>
             </div>
           ) : (
-            /* 原始 JSON 数据视图 */
+            /* Raw JSON data view */
             <div>
               <div className="mb-6">
                 <h2 className="text-lg font-medium text-zinc-300">

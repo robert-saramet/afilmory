@@ -30,10 +30,10 @@ export const useVisiblePhotosDateRange = (_photos: PhotoManifest[]) => {
   const currentRange = useRef<VisibleRange>({ start: 0, end: 0 })
 
   const getPhotoDate = useCallback((photo: PhotoManifest): Date => {
-    // 优先使用 EXIF 中的拍摄时间
+    // Prioritize using the shooting time from EXIF
     if (photo.exif?.DateTimeOriginal) {
       const dateStr = photo.exif.DateTimeOriginal as unknown as string
-      // EXIF 日期格式通常是 "YYYY:MM:DD HH:mm:ss"
+      // EXIF date format is usually "YYYY:MM:DD HH:mm:ss"
       const formattedDateStr = dateStr.replace(
         /^(\d{4}):(\d{2}):(\d{2})/,
         '$1-$2-$3',
@@ -44,7 +44,7 @@ export const useVisiblePhotosDateRange = (_photos: PhotoManifest[]) => {
       }
     }
 
-    // 回退到 lastModified
+    // Fallback to lastModified
     return new Date(photo.lastModified)
   }, [])
   const { i18n } = useTranslation()
@@ -56,7 +56,7 @@ export const useVisiblePhotosDateRange = (_photos: PhotoManifest[]) => {
       const startMonth = startDate.getMonth()
       const endMonth = endDate.getMonth()
 
-      // 如果是同一天
+      // If it's the same day
       if (startDate.toDateString() === endDate.toDateString()) {
         return startDate.toLocaleDateString(i18n.language, {
           year: 'numeric',
@@ -83,9 +83,11 @@ export const useVisiblePhotosDateRange = (_photos: PhotoManifest[]) => {
 
   const extractLocation = useCallback(
     (photos: PhotoManifest[]): string | undefined => {
-      // 尝试从照片标签中提取位置信息
+      // Try to extract location information from photo tags
       for (const photo of photos) {
-        // 如果照片有位置标签，优先使用
+        // If the photo has a location tag, prioritize it
+        // TODO: This location detection logic is based on Chinese keywords.
+        // It should be refactored to use a more robust, locale-aware solution.
         if (photo.tags) {
           const locationTag = photo.tags.find(
             (tag) =>
@@ -116,7 +118,7 @@ export const useVisiblePhotosDateRange = (_photos: PhotoManifest[]) => {
     [],
   )
 
-  // 计算当前可视范围内照片的日期范围
+  // Calculate the date range of photos currently visible in the viewport
   const calculateDateRange = useCallback(
     (startIndex: number, endIndex: number, items: any[]) => {
       if (!items || items.length === 0) {
@@ -129,7 +131,7 @@ export const useVisiblePhotosDateRange = (_photos: PhotoManifest[]) => {
         return
       }
 
-      // 过滤出照片类型的items (排除header等)
+      // Filter out items of type photo (excluding headers, etc.)
       const visiblePhotos = items
         .slice(startIndex, endIndex + 1)
         .filter(
@@ -147,7 +149,7 @@ export const useVisiblePhotosDateRange = (_photos: PhotoManifest[]) => {
         return
       }
 
-      // 计算日期范围
+      // Calculate date range
       const dates = visiblePhotos
         .map((photo) => getPhotoDate(photo))
         .sort((a, b) => a.getTime() - b.getTime())
@@ -175,13 +177,13 @@ export const useVisiblePhotosDateRange = (_photos: PhotoManifest[]) => {
         location,
       })
 
-      // 更新当前范围
+      // Update current range
       currentRange.current = { start: startIndex, end: endIndex }
     },
     [getPhotoDate, formatDateRange],
   )
 
-  // 用于传递给 masonry 的 onRender 回调
+  // Used for the onRender callback passed to masonry
   const handleRender = useCallback(
     (startIndex: number, stopIndex: number, items: any[]) => {
       calculateDateRange(startIndex, stopIndex, items)
