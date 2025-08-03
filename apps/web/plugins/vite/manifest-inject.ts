@@ -19,7 +19,7 @@ export function manifestInjectPlugin(): Plugin {
     name: 'manifest-inject',
 
     configureServer(server) {
-      // 监听 manifest 文件变化
+      // Watch for manifest file changes
       server.watcher.add(MANIFEST_PATH)
 
       server.watcher.on('change', (file) => {
@@ -27,7 +27,7 @@ export function manifestInjectPlugin(): Plugin {
           console.info(
             '[manifest-inject] Manifest file changed, triggering HMR...',
           )
-          // 触发页面重新加载
+          // Trigger page reload
           server.ws.send({
             type: 'full-reload',
           })
@@ -38,7 +38,7 @@ export function manifestInjectPlugin(): Plugin {
     transformIndexHtml(html) {
       const manifestContent = getManifestContent()
 
-      // 将 manifest 内容注入到 script#manifest 标签中
+      // Inject manifest content into script#manifest tag
       const scriptContent = `window.__MANIFEST__ = ${manifestContent};`
 
       return html.replace(

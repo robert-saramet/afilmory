@@ -34,9 +34,9 @@ export const PhotoMarkerPin = ({
       latitude={marker.latitude}
     >
       <HoverCard
-        open={isSelected ? true : undefined} // 当选中时强制打开
-        openDelay={isSelected ? 0 : 400} // 选中时立即打开
-        closeDelay={isSelected ? 0 : 100} // 选中时不自动关闭
+        open={isSelected ? true : undefined} // Force open when selected
+        openDelay={isSelected ? 0 : 400} // Open immediately when selected
+        closeDelay={isSelected ? 0 : 100} // Do not automatically close when selected
       >
         <HoverCardTrigger asChild>
           <m.div
@@ -52,7 +52,7 @@ export const PhotoMarkerPin = ({
             whileTap={{ scale: 0.9 }}
             onClick={handleClick}
           >
-            {/* Selection ring - 只有选中时显示 */}
+            {/* Selection ring - only shown when selected */}
             {isSelected && (
               <div className="bg-blue/30 absolute inset-0 -m-2 animate-pulse rounded-full" />
             )}
@@ -102,14 +102,14 @@ export const PhotoMarkerPin = ({
           side="top"
           align="center"
           sideOffset={8}
-          // 当选中时阻止点击外部关闭
+          // Prevent closing by clicking outside when selected
           onPointerDownOutside={
             isSelected ? (e) => e.preventDefault() : undefined
           }
           onEscapeKeyDown={isSelected ? (e) => e.preventDefault() : undefined}
         >
           <div className="relative">
-            {/* 选中时显示关闭按钮 */}
+            {/* Show close button when selected */}
             {isSelected && (
               <GlassButton
                 className="absolute top-3 right-3 z-10 size-8"

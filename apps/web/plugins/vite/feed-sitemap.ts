@@ -140,14 +140,14 @@ function generateExifTags(exif: any, photo: PhotoManifestItem): string {
 
   const tags: string[] = []
 
-  // === 基础相机设置参数 (basic) ===
+  // === Basic Camera Settings (basic) ===
 
-  // Aperture (光圈)
+  // Aperture
   if (exif.Photo?.FNumber) {
     tags.push(`      <exif:aperture>f/${exif.Photo.FNumber}</exif:aperture>`)
   }
 
-  // Shutter Speed (快门)
+  // Shutter Speed
   if (exif.Photo?.ExposureTime) {
     const shutterSpeed =
       exif.Photo.ExposureTime >= 1
@@ -161,7 +161,7 @@ function generateExifTags(exif: any, photo: PhotoManifestItem): string {
     tags.push(`      <exif:iso>${exif.Photo.ISOSpeedRatings}</exif:iso>`)
   }
 
-  // Exposure Compensation (曝光补偿)
+  // Exposure Compensation
   if (exif.Photo?.ExposureBiasValue !== undefined) {
     const ev = exif.Photo.ExposureBiasValue
     const evString = ev > 0 ? `+${ev}` : `${ev}`
@@ -170,18 +170,18 @@ function generateExifTags(exif: any, photo: PhotoManifestItem): string {
     )
   }
 
-  // === 图像属性 (basic) ===
+  // === Image Attributes (basic) ===
 
-  // Image Dimensions (图片宽度，高度)
+  // Image Dimensions (width, height)
   tags.push(
     `      <exif:imageWidth>${photo.width}</exif:imageWidth>`,
     `      <exif:imageHeight>${photo.height}</exif:imageHeight>`,
   )
 
-  // Date Taken (拍摄时间) - 转换为 ISO 8601 格式
+  // Date Taken - converted to ISO 8601 format
   if (exif.Photo?.DateTimeOriginal) {
     try {
-      // 尝试解析 EXIF 日期格式 (YYYY:MM:DD HH:mm:ss)
+      // Try to parse EXIF date format (YYYY:MM:DD HH:mm:ss)
       const exifDate = exif.Photo.DateTimeOriginal.replaceAll(':', '-').replace(
         /-(\d{2}:\d{2}:\d{2})/,
         ' $1',
@@ -189,7 +189,7 @@ function generateExifTags(exif: any, photo: PhotoManifestItem): string {
       const isoDate = new Date(exifDate).toISOString()
       tags.push(`      <exif:dateTaken>${isoDate}</exif:dateTaken>`)
     } catch {
-      // 如果解析失败，使用 photo.dateTaken
+      // If parsing fails, use photo.dateTaken
       const isoDate = new Date(photo.dateTaken).toISOString()
       tags.push(`      <exif:dateTaken>${isoDate}</exif:dateTaken>`)
     }
@@ -198,44 +198,44 @@ function generateExifTags(exif: any, photo: PhotoManifestItem): string {
     tags.push(`      <exif:dateTaken>${isoDate}</exif:dateTaken>`)
   }
 
-  // Camera Model (机型)
+  // Camera Model
   if (exif.Image?.Make && exif.Image?.Model) {
     tags.push(
       `      <exif:camera><![CDATA[${exif.Image.Make} ${exif.Image.Model}]]></exif:camera>`,
     )
   }
 
-  // Orientation (图像方向)
+  // Orientation
   if (exif.Image?.Orientation) {
     tags.push(
       `      <exif:orientation>${exif.Image.Orientation}</exif:orientation>`,
     )
   }
 
-  // === 镜头参数 (lens) ===
+  // === Lens Parameters (lens) ===
 
-  // Lens Model (镜头)
+  // Lens Model
   if (exif.Photo?.LensModel) {
     tags.push(
       `      <exif:lens><![CDATA[${exif.Photo.LensModel}]]></exif:lens>`,
     )
   }
 
-  // Focal Length (焦段)
+  // Focal Length
   if (exif.Photo?.FocalLength) {
     tags.push(
       `      <exif:focalLength>${exif.Photo.FocalLength}mm</exif:focalLength>`,
     )
   }
 
-  // Focal Length in 35mm equivalent (等效 35mm 焦距)
+  // Focal Length in 35mm equivalent
   if (exif.Photo?.FocalLengthIn35mmFilm) {
     tags.push(
       `      <exif:focalLength35mm>${exif.Photo.FocalLengthIn35mmFilm}mm</exif:focalLength35mm>`,
     )
   }
 
-  // Max Aperture (镜头最大光圈)
+  // Max Aperture
   if (exif.Photo?.MaxApertureValue) {
     const maxAperture = Math.pow(2, exif.Photo.MaxApertureValue / 2)
     tags.push(
@@ -243,7 +243,7 @@ function generateExifTags(exif: any, photo: PhotoManifestItem): string {
     )
   }
 
-  // === 位置信息 (location) ===
+  // === Location Information (location) ===
 
   // GPS Coordinates
   if (exif.GPS?.GPSLatitude && exif.GPS?.GPSLongitude) {
@@ -257,7 +257,7 @@ function generateExifTags(exif: any, photo: PhotoManifestItem): string {
     }
   }
 
-  // Altitude (海拔)
+  // Altitude
   if (exif.GPS?.GPSAltitude) {
     const altitude =
       exif.GPS.GPSAltitudeRef === 1
@@ -266,9 +266,9 @@ function generateExifTags(exif: any, photo: PhotoManifestItem): string {
     tags.push(`      <exif:altitude>${altitude}m</exif:altitude>`)
   }
 
-  // === 技术参数 (technical) ===
+  // === Technical Parameters (technical) ===
 
-  // White Balance (白平衡)
+  // White Balance
   if (exif.Photo?.WhiteBalance !== undefined) {
     const whiteBalanceMap = { 0: 'Auto', 1: 'Manual' }
     const wb =
@@ -278,7 +278,7 @@ function generateExifTags(exif: any, photo: PhotoManifestItem): string {
     tags.push(`      <exif:whiteBalance>${wb}</exif:whiteBalance>`)
   }
 
-  // Metering Mode (测光模式)
+  // Metering Mode
   if (exif.Photo?.MeteringMode !== undefined) {
     const meteringModeMap = {
       0: 'Unknown',
@@ -296,14 +296,14 @@ function generateExifTags(exif: any, photo: PhotoManifestItem): string {
     }
   }
 
-  // Flash Mode (闪光灯模式)
+  // Flash Mode
   if (exif.Photo?.Flash !== undefined) {
     const flashFired = (exif.Photo.Flash & 0x01) !== 0
     const flashMode = flashFired ? 'On' : 'Off'
     tags.push(`      <exif:flashMode>${flashMode}</exif:flashMode>`)
   }
 
-  // Color Space (色彩空间)
+  // Color Space
   if (exif.Photo?.ColorSpace !== undefined) {
     const colorSpaceMap = { 1: 'sRGB', 65535: 'Uncalibrated' }
     const colorSpace =
@@ -312,9 +312,9 @@ function generateExifTags(exif: any, photo: PhotoManifestItem): string {
     tags.push(`      <exif:colorSpace>${colorSpace}</exif:colorSpace>`)
   }
 
-  // === 高级参数 (advanced) ===
+  // === Advanced Parameters (advanced) ===
 
-  // Exposure Program (曝光程序)
+  // Exposure Program
   if (exif.Photo?.ExposureProgram !== undefined) {
     const exposureProgramMap = {
       0: 'Not defined',
@@ -336,7 +336,7 @@ function generateExifTags(exif: any, photo: PhotoManifestItem): string {
     }
   }
 
-  // Scene Mode (场景模式)
+  // Scene Mode
   if (exif.Photo?.SceneCaptureType !== undefined) {
     const sceneModeMap = {
       0: 'Standard',
@@ -351,7 +351,7 @@ function generateExifTags(exif: any, photo: PhotoManifestItem): string {
     }
   }
 
-  // Contrast (对比度)
+  // Contrast
   if (exif.Photo?.Contrast !== undefined) {
     const contrastMap = { 0: 'Normal', 1: 'Low', 2: 'High' }
     const contrast =
@@ -361,7 +361,7 @@ function generateExifTags(exif: any, photo: PhotoManifestItem): string {
     }
   }
 
-  // Saturation (饱和度)
+  // Saturation
   if (exif.Photo?.Saturation !== undefined) {
     const saturationMap = { 0: 'Normal', 1: 'Low', 2: 'High' }
     const saturation =
@@ -371,7 +371,7 @@ function generateExifTags(exif: any, photo: PhotoManifestItem): string {
     }
   }
 
-  // Sharpness (锐度)
+  // Sharpness
   if (exif.Photo?.Sharpness !== undefined) {
     const sharpnessMap = { 0: 'Normal', 1: 'Soft', 2: 'Hard' }
     const sharpness =
@@ -398,7 +398,7 @@ function convertDMSToDD(dms: number[], ref: string): number | null {
     dd = dd * -1
   }
 
-  return Math.round(dd * 1000000) / 1000000 // 保留 6 位小数
+  return Math.round(dd * 1000000) / 1000000 // Keep 6 decimal places
 }
 
 function generateSitemap(

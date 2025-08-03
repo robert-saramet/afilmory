@@ -86,19 +86,19 @@ export const Maplibre = ({
     [markers, currentZoom],
   )
 
-  // 计算合适的缩放级别
+  // Calculate the appropriate zoom level
   const calculateZoomLevel = useCallback((latDiff: number, lngDiff: number) => {
     const maxDiff = Math.max(latDiff, lngDiff)
 
-    if (maxDiff < 0.001) return 16 // 非常接近的点
-    if (maxDiff < 0.01) return 14 // 很接近的点
-    if (maxDiff < 0.1) return 11 // 附近的点
-    if (maxDiff < 1) return 8 // 同一城市
-    if (maxDiff < 10) return 5 // 同一国家/地区
-    return 2 // 跨洲
+    if (maxDiff < 0.001) return 16 // Very close points
+    if (maxDiff < 0.01) return 14 // Close points
+    if (maxDiff < 0.1) return 11 // Nearby points
+    if (maxDiff < 1) return 8 // Same city
+    if (maxDiff < 10) return 5 // Same country/region
+    return 2 // Intercontinental
   }, [])
 
-  // 自动适配到包含所有照片的区域 - 只在初次加载时执行
+  // Auto-fit to the area containing all photos - only on initial load
   const fitMapToBounds = useCallback(() => {
     if (
       !autoFitBounds ||
@@ -111,35 +111,35 @@ export const Maplibre = ({
     const bounds = calculateMapBounds(markers)
     if (!bounds) return
 
-    // 标记初次适配已完成
+    // Mark initial fit as complete
     setHasInitialFitCompleted(true)
 
-    // 如果只有一个点，设置默认缩放级别
+    // If there is only one point, set a default zoom level
     if (markers.length === 1) {
       const newViewState = {
         longitude: markers[0].longitude,
         latitude: markers[0].latitude,
-        zoom: 13, // 单点时的合理缩放级别
+        zoom: 13, // Reasonable zoom level for a single point
       }
       setViewState(newViewState)
       setCurrentZoom(newViewState.zoom)
       return
     }
 
-    // 使用 mapRef 的 fitBounds 方法（推荐方式）
+    // Use the fitBounds method of mapRef (recommended)
     if (mapRef?.current?.getMap) {
-      // 计算动态padding，确保照片区域控制在窗口的80%内
-      // 这意味着每边留出10%的空间作为缓冲区
+      // Calculate dynamic padding to ensure the photo area is within 80% of the window
+      // This means leaving a 10% buffer on each side
       const mapContainer = mapRef.current.getContainer()
       const containerWidth = mapContainer.offsetWidth
       const containerHeight = mapContainer.offsetHeight
 
-      const paddingPercentage = 0.1 // 每边10%的padding
+      const paddingPercentage = 0.1 // 10% padding on each side
       const horizontalPadding = containerWidth * paddingPercentage
       const verticalPadding = containerHeight * paddingPercentage
 
       const padding = {
-        top: Math.max(verticalPadding, 40), // 最小40px
+        top: Math.max(verticalPadding, 40), // Minimum 40px
         bottom: Math.max(verticalPadding, 40),
         left: Math.max(horizontalPadding, 40),
         right: Math.max(horizontalPadding, 40),
@@ -149,22 +149,22 @@ export const Maplibre = ({
         const map = mapRef.current.getMap()
         map.fitBounds(
           [
-            [bounds.minLng, bounds.minLat], // 西南角
-            [bounds.maxLng, bounds.maxLat], // 东北角
+            [bounds.minLng, bounds.minLat], // Southwest corner
+            [bounds.maxLng, bounds.maxLat], // Northeast corner
           ],
           {
             padding,
-            duration: 800, // 平滑动画
-            maxZoom: 15, // 最大缩放级别限制，避免过度放大
+            duration: 800, // Smooth animation
+            maxZoom: 15, // Max zoom level limit to avoid over-zooming
           },
         )
       } catch (error) {
-        console.warn('使用 fitBounds 失败，使用备用方案:', error)
-        // 备用方案：手动计算视图状态
+        console.warn('fitBounds failed, using fallback:', error)
+        // Fallback: manually calculate view state
         fallbackToViewState(bounds)
       }
     } else {
-      // mapRef 不可用时的备用方案
+      // Fallback for when mapRef is not available
       fallbackToViewState(bounds)
     }
 
@@ -175,7 +175,7 @@ export const Maplibre = ({
 
       const latDiff = bounds.maxLat - bounds.minLat
       const lngDiff = bounds.maxLng - bounds.minLng
-      // 为备用方案也增加一些缓冲，降低一级缩放
+      // Also add some buffer for the fallback, reduce zoom by one level
       const zoom = Math.max(calculateZoomLevel(latDiff, lngDiff) - 1, 2)
 
       const newViewState = {
@@ -196,14 +196,14 @@ export const Maplibre = ({
     hasInitialFitCompleted,
   ])
 
-  // 当地图加载完成时触发适配
+  // Trigger fit when map is loaded
   const handleMapLoad = useCallback(() => {
     setIsMapLoaded(true)
   }, [])
 
-  // 当标记点变化时，重新适配边界
+  // Re-fit bounds when markers change
   useEffect(() => {
-    // 延迟执行，确保地图已渲染
+    // Delay execution to ensure the map has rendered
     const timer = setTimeout(() => {
       fitMapToBounds()
     }, 100)

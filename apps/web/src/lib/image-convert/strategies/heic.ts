@@ -8,7 +8,7 @@ import { LRUCache } from '~/lib/lru-cache'
 
 import type { ConversionResult, ImageConverterStrategy } from '../type'
 
-// HEIC 转换策略
+// HEIC conversion strategy
 export class HeicConverterStrategy implements ImageConverterStrategy {
   getName(): string {
     return 'HEIC'
@@ -20,7 +20,7 @@ export class HeicConverterStrategy implements ImageConverterStrategy {
 
   async shouldConvert(_blob: Blob): Promise<boolean> {
     try {
-      // 只需检查浏览器是否支持，格式检测已由 file-type 完成
+      // Just check if the browser supports it, the format detection has been done by file-type
       return !isBrowserSupportHeic()
     } catch (error) {
       console.error('HEIC browser support detection failed:', error)
@@ -36,10 +36,10 @@ export class HeicConverterStrategy implements ImageConverterStrategy {
     const { onLoadingStateUpdate } = callbacks || {}
 
     try {
-      // 获取国际化文案
+      // Get i18n text
       const i18n = jotaiStore.get(i18nAtom)
 
-      // 更新转换状态
+      // Update conversion status
       onLoadingStateUpdate?.({
         isConverting: true,
         conversionMessage: i18n.t('loading.heic.converting'),
@@ -86,17 +86,17 @@ const heicCache: LRUCache<string, ConversionResult> = new LRUCache<
 )
 
 /**
- * 生成文件的缓存键（基于 src）
+ * Generate cache key for the file (based on src)
  */
 function generateCacheKey(src: string, options: HeicConversionOptions): string {
   const quality = options.quality || 1
   const format = options.format || 'image/jpeg'
-  // 使用文件 src 和转换选项生成唯一键
+  // Use file src and conversion options to generate a unique key
   return `${src}-${quality}-${format}`
 }
 
 /**
- * 检测文件是否为 HEIC/HEIF 格式
+ * Detect if the file is in HEIC/HEIF format
  */
 export async function detectHeicFormat(file: File | Blob): Promise<boolean> {
   try {
@@ -116,7 +116,7 @@ export const isBrowserSupportHeic = () => {
 }
 
 /**
- * 将 HEIC/HEIF 图片转换为 JPEG 或 PNG（支持缓存）
+ * Convert HEIC/HEIF image to JPEG or PNG (with cache support)
  */
 export async function convertHeicImage(
   file: File | Blob,
@@ -125,10 +125,10 @@ export async function convertHeicImage(
 ): Promise<ConversionResult> {
   const { quality = 1, format = 'image/jpeg' } = options
 
-  // 生成缓存键
+  // Generate cache key
   const cacheKey = generateCacheKey(src, options)
 
-  // 检查缓存
+  // Check cache
   const cachedResult = heicCache.get(cacheKey)
   if (cachedResult) {
     console.info('Using cached HEIC conversion result', cachedResult)
@@ -136,20 +136,20 @@ export async function convertHeicImage(
   }
 
   try {
-    // 检查是否为 HEIC 格式
+    // Check if it is HEIC format
     const isHeicFormat = await detectHeicFormat(file)
     if (!isHeicFormat) {
       throw new Error('File is not in HEIC/HEIF format')
     }
 
-    // 转换图片
+    // Convert image
     const convertedBlob = await heicTo({
       blob: file,
       type: format,
       quality,
     })
 
-    // 创建 URL
+    // Create URL
     const url = URL.createObjectURL(convertedBlob)
 
     const result: ConversionResult = {
@@ -159,7 +159,7 @@ export async function convertHeicImage(
       format,
     }
 
-    // 缓存结果
+    // Cache result
     heicCache.set(cacheKey, result)
     console.info(
       `HEIC conversion completed and cached: ${(file.size / 1024).toFixed(1)}KB → ${(convertedBlob.size / 1024).toFixed(1)}KB`,
@@ -175,7 +175,7 @@ export async function convertHeicImage(
 }
 
 /**
- * 清理转换后的 URL
+ * Clean up the converted URL
  */
 export function revokeConvertedUrl(url: string): void {
   try {
@@ -185,7 +185,7 @@ export function revokeConvertedUrl(url: string): void {
   }
 }
 
-// HEIC 缓存管理函数
+// HEIC cache management functions
 export function getHeicCacheSize(): number {
   return heicCache.size()
 }
@@ -207,7 +207,7 @@ export function getHeicCacheStats(): {
 }
 
 /**
- * 根据 src 和选项移除特定的 HEIC 缓存项
+ * Remove specific HEIC cache items based on src and options
  */
 export function removeHeicCacheBySrc(
   src: string,

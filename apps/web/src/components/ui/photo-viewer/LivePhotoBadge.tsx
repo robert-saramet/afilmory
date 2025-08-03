@@ -40,7 +40,7 @@ export const LivePhotoBadge: FC<LivePhotoBadgeProps> = ({
 
   return (
     <>
-      {/* Live Photo 标识 */}
+      {/* Live Photo indicator */}
       <div
         className={clsxm(
           'absolute z-20 flex items-center space-x-1 rounded-xl bg-black/50 px-1 py-1 text-xs text-white transition-all duration-200',
@@ -54,7 +54,7 @@ export const LivePhotoBadge: FC<LivePhotoBadgeProps> = ({
         <span className="mr-1">{t('photo.live.badge')}</span>
       </div>
 
-      {/* 播放状态提示 */}
+      {/* Playback status indicator */}
       <AnimatePresence>
         {isLivePhotoPlaying && (
           <m.div
@@ -71,7 +71,7 @@ export const LivePhotoBadge: FC<LivePhotoBadgeProps> = ({
         )}
       </AnimatePresence>
 
-      {/* 操作提示 */}
+      {/* Action hint */}
       <div
         className={clsxm(
           'pointer-events-none absolute bottom-4 left-1/2 z-20 -translate-x-1/2 rounded bg-black/50 px-2 py-1 text-xs text-white opacity-0 duration-200 group-hover:opacity-50',

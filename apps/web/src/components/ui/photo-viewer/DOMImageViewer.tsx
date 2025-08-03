@@ -22,16 +22,16 @@ export const DOMImageViewer: FC<DOMImageViewerProps> = ({
   children,
 }) => {
   const transformRef = useRef<ReactZoomPanPinchRef>(null)
-  // 兼容外部 ref
+  // Compatible with external ref
   const activeRef = ref || transformRef
 
-  // 监听缩放变化
+  // Listen for zoom changes
   const onTransformed = useCallback(
     (
       transformRef: ReactZoomPanPinchRef,
       state: Omit<ReactZoomPanPinchState, 'previousScale'>,
     ) => {
-      // 计算实际缩放倍率（相对于原图尺寸）
+      // Calculate the actual zoom ratio (relative to the original image size)
       const { instance } = transformRef
       const wrapper = instance.wrapperComponent
       const img = wrapper?.querySelector('img') as HTMLImageElement | null
@@ -59,7 +59,7 @@ export const DOMImageViewer: FC<DOMImageViewerProps> = ({
     }
   }, [src, ref, activeRef])
 
-  // 双击切换 1x/fitToScreenScale，缩放中心为指针位置
+  // Double-click to switch between 1x/fitToScreenScale, with the zoom center at the pointer position
   const handleDoubleClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       const instance = activeRef.current?.instance
@@ -69,7 +69,7 @@ export const DOMImageViewer: FC<DOMImageViewerProps> = ({
       const img = wrapper.querySelector('img') as HTMLImageElement | null
       if (!img || img.naturalWidth === 0 || img.naturalHeight === 0) return
       const containerRect = wrapper.getBoundingClientRect()
-      // 指针在容器内的坐标
+      // Pointer coordinates within the container
       const pointerX = event.clientX - containerRect.left
       const pointerY = event.clientY - containerRect.top
       const containerWidth = wrapper.clientWidth || 1
@@ -81,17 +81,17 @@ export const DOMImageViewer: FC<DOMImageViewerProps> = ({
       const scale0 = instance.transformState.scale
       const x0 = instance.transformState.positionX
       const y0 = instance.transformState.positionY
-      // 判断当前是否为 fitToScreen 或 1x
+      // Determine if the current state is fitToScreen or 1x
       const isAtFit = Math.abs(scale0 - 1) < 0.01
       const isAt1x = Math.abs(scale0 * fit - 1) < 0.01
       if (isAtFit) {
-        // fitToScreen -> 放大到 1x
+        // fitToScreen -> zoom to 1x
         const scale1 = 1 / fit
         const x1 = pointerX - (pointerX - x0) * (scale1 / scale0)
         const y1 = pointerY - (pointerY - y0) * (scale1 / scale0)
         activeRef.current?.setTransform(x1, y1, scale1, 200, 'easeInOutCubic')
       } else if (isAt1x) {
-        // 1x -> 回到 fitToScreen
+        // 1x -> return to fitToScreen
         activeRef.current?.setTransform(0, 0, 1, 200, 'easeInOutCubic')
       }
     },
@@ -115,7 +115,7 @@ export const DOMImageViewer: FC<DOMImageViewerProps> = ({
           step: 0.5,
         }}
         doubleClick={{
-          disabled: true, // 禁用内置双击
+          disabled: true, // Disable built-in double-click
         }}
         limitToBounds={true}
         centerOnInit={true}

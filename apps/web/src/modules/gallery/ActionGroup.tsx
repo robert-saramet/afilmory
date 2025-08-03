@@ -68,7 +68,7 @@ const TagsPanel = () => {
   const [searchQuery, setSearchQuery] = useState(gallerySetting.tagSearchQuery)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // 当面板打开时自动聚焦输入框
+  // Automatically focus the input when the panel is opened
   useEffect(() => {
     if (gallerySetting.isTagsPanelOpen && inputRef.current) {
       inputRef.current?.focus()
@@ -90,8 +90,8 @@ const TagsPanel = () => {
     setGallerySetting({
       ...gallerySetting,
       selectedTags: [],
-      tagSearchQuery: '', // 清除搜索查询
-      isTagsPanelOpen: false, // 关闭标签面板
+      tagSearchQuery: '', // Clear search query
+      isTagsPanelOpen: false, // Close tags panel
     })
   }
 
@@ -100,11 +100,11 @@ const TagsPanel = () => {
     setSearchQuery(query)
     setGallerySetting((prev) => ({
       ...prev,
-      tagSearchQuery: query, // 同步搜索查询
+      tagSearchQuery: query, // Sync search query
     }))
   }
 
-  // 根据正则查询过滤标签
+  // Filter tags based on regex query
   const filteredTags = allTagsForFiltering.filter((tag) => {
     if (!searchQuery) return true
 
@@ -112,7 +112,7 @@ const TagsPanel = () => {
       const regex = new RegExp(searchQuery, 'i')
       return regex.test(tag)
     } catch {
-      // 如果正则表达式无效，回退到简单的包含查询
+      // If the regex is invalid, fallback to a simple includes query
       return tag.toLowerCase().includes(searchQuery.toLowerCase())
     }
   })
@@ -134,7 +134,7 @@ const TagsPanel = () => {
           </Button>
         )}
       </div>
-      {/* 搜索栏 */}
+      {/* Search bar */}
       <div className="mb-3 px-2">
         <div className="relative">
           <input
@@ -198,10 +198,10 @@ const ColumnsPanel = () => {
       columns,
     })
   }
-  // 根据设备类型提供不同的列数范围
+  // Provide different column ranges based on device type
   const columnRange = isMobile
-    ? { min: 2, max: 4 } // 移动端适合的列数范围
-    : { min: 2, max: 8 } // 桌面端适合的列数范围
+    ? { min: 2, max: 4 } // Suitable column range for mobile
+    : { min: 2, max: 8 } // Suitable column range for desktop
 
   return (
     <div className="pb-safe lg:pb-safe-2 w-full lg:w-80 lg:p-2">
@@ -222,7 +222,7 @@ const ColumnsPanel = () => {
   )
 }
 
-// 通用的操作按钮组件
+// Generic action button component
 const ActionButton = ({
   icon,
   title,
@@ -259,7 +259,7 @@ const ActionButton = ({
   )
 }
 
-// 桌面端的下拉菜单按钮
+// Desktop dropdown menu button
 const DesktopActionButton = ({
   icon,
   title,
@@ -303,7 +303,7 @@ const DesktopActionButton = ({
   )
 }
 
-// 移动端的抽屉按钮
+// Mobile drawer button
 const MobileActionButton = ({
   icon,
   title,
@@ -340,7 +340,7 @@ const MobileActionButton = ({
   )
 }
 
-// 响应式操作按钮组件
+// Responsive action button component
 const ResponsiveActionButton = ({
   icon,
   title,
@@ -399,7 +399,7 @@ export const ActionGroup = () => {
 
   return (
     <div className="flex items-center justify-center gap-3">
-      {/* 地图探索按钮 */}
+      {/* Map explore button */}
       <Button
         variant="ghost"
         size="sm"
@@ -410,7 +410,7 @@ export const ActionGroup = () => {
         <i className="i-mingcute-map-pin-line text-base text-gray-600 dark:text-gray-300" />
       </Button>
 
-      {/* 标签筛选按钮 */}
+      {/* Tag filter button */}
       <ResponsiveActionButton
         icon="i-mingcute-tag-line"
         title={t('action.tag.filter')}
@@ -419,14 +419,14 @@ export const ActionGroup = () => {
             ? gallerySetting.selectedTags.length
             : undefined
         }
-        // 使用全局状态实现滚动时自动收起标签面板
+        // Use global state to automatically collapse the tags panel on scroll
         globalOpen={gallerySetting.isTagsPanelOpen}
         onGlobalOpenChange={onTagsPanelOpenChange}
       >
         <TagsPanel />
       </ResponsiveActionButton>
 
-      {/* 列数调整按钮 */}
+      {/* Column adjustment button */}
       <ResponsiveActionButton
         icon="i-mingcute-grid-line"
         title={t('action.columns.setting')}
@@ -437,7 +437,7 @@ export const ActionGroup = () => {
         <ColumnsPanel />
       </ResponsiveActionButton>
 
-      {/* 排序按钮 */}
+      {/* Sort button */}
       <ResponsiveActionButton
         icon={
           gallerySetting.sortOrder === 'desc'
@@ -460,7 +460,7 @@ const panelMap = {
 }
 
 export type PanelType = keyof typeof panelMap
-// 导出 ActionType 以保持与 FloatingActionButton 的一致性
+// Export ActionType to maintain consistency with FloatingActionButton
 export type ActionType = PanelType
 
 export const ActionPanel = ({

@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 
 /**
- * Blob URL 管理工具
- * 用于安全地管理 URL.createObjectURL 和 URL.revokeObjectURL，防止内存泄漏
+ * Blob URL management utility
+ * Used to safely manage URL.createObjectURL and URL.revokeObjectURL to prevent memory leaks
  */
 
 export class BlobUrlManager {
   private urls = new Set<string>()
 
   /**
-   * 创建 blob URL 并自动追踪
+   * Create a blob URL and automatically track it
    */
   createUrl(blob: Blob): string {
     const url = URL.createObjectURL(blob)
@@ -18,7 +18,7 @@ export class BlobUrlManager {
   }
 
   /**
-   * 手动释放指定的 URL
+   * Manually release the specified URL
    */
   revokeUrl(url: string): void {
     if (this.urls.has(url)) {
@@ -32,7 +32,7 @@ export class BlobUrlManager {
   }
 
   /**
-   * 释放所有追踪的 URL
+   * Release all tracked URLs
    */
   revokeAll(): void {
     for (const url of this.urls) {
@@ -46,7 +46,7 @@ export class BlobUrlManager {
   }
 
   /**
-   * 获取当前追踪的 URL 数量
+   * Get the number of currently tracked URLs
    */
   getCount(): number {
     return this.urls.size
@@ -54,7 +54,7 @@ export class BlobUrlManager {
 }
 
 /**
- * React Hook: 用于在组件中安全管理 blob URLs
+ * React Hook: for safely managing blob URLs in components
  */
 export function useBlobUrlManager() {
   const managerRef = useRef<BlobUrlManager | null>(null)
@@ -63,7 +63,7 @@ export function useBlobUrlManager() {
     managerRef.current = new BlobUrlManager()
   }
 
-  // 组件卸载时自动清理所有 URL
+  // Automatically clean up all URLs when the component is unmounted
   useEffect(() => {
     return () => {
       managerRef.current?.revokeAll()
@@ -74,7 +74,7 @@ export function useBlobUrlManager() {
 }
 
 /**
- * React Hook: 用于单个 blob URL 的管理
+ * React Hook: for managing a single blob URL
  */
 export function useBlobUrl(blob: Blob | null): string | null {
   const [url, setUrl] = useState<string | null>(null)
@@ -96,7 +96,7 @@ export function useBlobUrl(blob: Blob | null): string | null {
     }
   }, [blob])
 
-  // 清理 URL 当组件卸载
+  // Clean up the URL when the component is unmounted
   useEffect(() => {
     return () => {
       if (url) {

@@ -74,17 +74,17 @@ export const GalleryThumbnail: FC<{
     }
   }, [currentIndex, isMobile, scrollContainerWidth])
 
-  // 处理鼠标滚轮事件，映射为横向滚动
+  // Handle mouse wheel events, mapping them to horizontal scrolling
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current
     if (!scrollContainer) return
 
     const handleWheel = (e: WheelEvent) => {
-      // 阻止默认的垂直滚动
+      // Prevent default vertical scrolling
       e.preventDefault()
 
-      // 优先使用触控板的横向滚动 (deltaX)
-      // 如果没有横向滚动，则将垂直滚动 (deltaY) 转换为横向滚动
+      // Prioritize using the trackpad's horizontal scroll (deltaX)
+      // If there is no horizontal scroll, convert vertical scroll (deltaY) to horizontal scroll
       const scrollAmount =
         Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY
       scrollContainer.scrollLeft += scrollAmount

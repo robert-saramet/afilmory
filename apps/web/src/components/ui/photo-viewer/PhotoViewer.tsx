@@ -57,7 +57,7 @@ export const PhotoViewer = ({
 
   const currentPhoto = photos[currentIndex]
 
-  // 当 PhotoViewer 关闭时重置缩放状态和面板状态
+  // Reset zoom state and panel state when PhotoViewer is closed
   useLayoutEffect(() => {
     if (!isOpen) {
       setIsImageZoomed(false)
@@ -80,40 +80,40 @@ export const PhotoViewer = ({
     }
   }, [currentIndex, photos.length, onIndexChange])
 
-  // 同步 Swiper 的索引
+  // Synchronize Swiper's index
   useEffect(() => {
     if (swiperRef.current && swiperRef.current.activeIndex !== currentIndex) {
       swiperRef.current.slideTo(currentIndex, 300)
     }
-    // 切换图片时重置缩放状态
+    // Reset zoom state when switching images
     setIsImageZoomed(false)
   }, [currentIndex])
 
-  // 当图片缩放状态改变时，控制 Swiper 的触摸行为
+  // Control Swiper's touch behavior when image zoom state changes
   useEffect(() => {
     if (swiperRef.current) {
       if (isImageZoomed) {
-        // 图片被缩放时，禁用 Swiper 的触摸滑动
+        // When the image is zoomed, disable Swiper's touch swipe
         swiperRef.current.allowTouchMove = false
       } else {
-        // 图片未缩放时，启用 Swiper 的触摸滑动
+        // When the image is not zoomed, enable Swiper's touch swipe
         swiperRef.current.allowTouchMove = true
       }
     }
   }, [isImageZoomed])
 
   const loadingIndicatorRef = useRef<LoadingIndicatorRef>(null)
-  // 处理图片缩放状态变化
+  // Handle image zoom state changes
   const handleZoomChange = useCallback((isZoomed: boolean) => {
     setIsImageZoomed(isZoomed)
   }, [])
 
-  // 处理 blobSrc 变化
+  // Handle blobSrc changes
   const handleBlobSrcChange = useCallback((blobSrc: string | null) => {
     setCurrentBlobSrc(blobSrc)
   }, [])
 
-  // 键盘导航
+  // Keyboard navigation
   useEffect(() => {
     if (!isOpen) return
 
@@ -158,8 +158,8 @@ export const PhotoViewer = ({
           />
         )}
       </AnimatePresence>
-      {/* 固定背景层防止透出 */}
-      {/* 交叉溶解的 Blurhash 背景 */}
+      {/* Fixed background layer to prevent show-through */}
+      {/* Cross-dissolving Blurhash background */}
       <AnimatePresence mode="sync">
         {isOpen && currentPhoto.thumbHash && (
           <m.div
@@ -190,7 +190,7 @@ export const PhotoViewer = ({
             >
               <div className="z-[1] flex min-h-0 min-w-0 flex-1 flex-col">
                 <div className="group relative flex min-h-0 min-w-0 flex-1">
-                  {/* 顶部工具栏 */}
+                  {/* Top toolbar */}
                   <m.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -198,9 +198,9 @@ export const PhotoViewer = ({
                     transition={Spring.presets.snappy}
                     className={`pointer-events-none absolute ${isMobile ? 'top-2 right-2 left-2' : 'top-4 right-4 left-4'} z-30 flex items-center justify-between`}
                   >
-                    {/* 左侧工具按钮 */}
+                    {/* Left toolbar buttons */}
                     <div className="flex items-center gap-2">
-                      {/* 信息按钮 - 在移动设备上显示 */}
+                      {/* Info button - shown on mobile devices */}
                       {isMobile && (
                         <button
                           type="button"
@@ -212,9 +212,9 @@ export const PhotoViewer = ({
                       )}
                     </div>
 
-                    {/* 右侧按钮组 */}
+                    {/* Right button group */}
                     <div className="flex items-center gap-2">
-                      {/* 分享按钮 */}
+                      {/* Share button */}
                       <SharePanel
                         photo={currentPhoto}
                         blobSrc={currentBlobSrc || undefined}
@@ -229,7 +229,7 @@ export const PhotoViewer = ({
                         }
                       />
 
-                      {/* 关闭按钮 */}
+                      {/* Close button */}
                       <button
                         type="button"
                         className="bg-material-ultra-thick pointer-events-auto flex size-8 items-center justify-center rounded-full text-white backdrop-blur-2xl duration-200 hover:bg-black/40"
@@ -247,9 +247,9 @@ export const PhotoViewer = ({
                     />
                   )}
 
-                  {/* 加载指示器 */}
+                  {/* Loading indicator */}
                   <LoadingIndicator ref={loadingIndicatorRef} />
-                  {/* Swiper 容器 */}
+                  {/* Swiper container */}
                   <Swiper
                     modules={[Navigation, Keyboard, Virtual]}
                     spaceBetween={0}
@@ -262,7 +262,7 @@ export const PhotoViewer = ({
                     }}
                     onSwiper={(swiper) => {
                       swiperRef.current = swiper
-                      // 初始化时确保触摸滑动是启用的
+                      // Ensure touch swipe is enabled on initialization
                       swiper.allowTouchMove = !isImageZoomed
                     }}
                     onSlideChange={(swiper) => {
@@ -323,7 +323,7 @@ export const PhotoViewer = ({
                     })}
                   </Swiper>
 
-                  {/* 自定义导航按钮 */}
+                  {/* Custom navigation buttons */}
 
                   {!isMobile && (
                     <Fragment>
@@ -359,7 +359,7 @@ export const PhotoViewer = ({
                 </Suspense>
               </div>
 
-              {/* ExifPanel - 在桌面端始终显示，在移动端根据状态显示 */}
+              {/* ExifPanel - always shown on desktop, shown based on state on mobile */}
 
               <Suspense>
                 <AnimatePresenceOnlyMobile>

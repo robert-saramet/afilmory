@@ -14,9 +14,11 @@ interface DateRangeIndicatorProps {
 
 export const DateRangeIndicator = memo(
   ({ dateRange, location, isVisible, className }: DateRangeIndicatorProps) => {
-    // 解析日期范围，提取主要的日期信息
+    // TODO: This date parsing logic is locale-dependent and only works for Chinese date formats.
+    // It should be refactored to use a locale-aware date formatting solution.
+    // Parse the date range to extract the main date information
     const parseMainDate = (range: string) => {
-      // 匹配跨年日期范围格式 "2022年3月 - 2023年5月"
+      // Match cross-year date range format "2022年3月 - 2023年5月"
       const crossYearMatch = range.match(
         /(\d{4})年(\d+)月\s*-\s*(\d{4})年(\d+)月/,
       )
@@ -25,7 +27,7 @@ export const DateRangeIndicator = memo(
         return `${startMonth}月 ${startYear} – ${endMonth}月 ${endYear}`
       }
 
-      // 匹配类似 "2022年3月30日 - 5月2日" 的格式
+      // Match format like "2022年3月30日 - 5月2日"
       const singleYearDayMatch = range.match(
         /(\d{4})年(\d+)月(\d+)日?\s*-\s*(\d+)月(\d+)日?/,
       )
@@ -35,21 +37,21 @@ export const DateRangeIndicator = memo(
         return `${startMonth}月${startDay}日–${endMonth}月${endDay}日, ${year}`
       }
 
-      // 匹配类似 "2022年3月 - 5月" 的格式
+      // Match format like "2022年3月 - 5月"
       const monthRangeMatch = range.match(/(\d{4})年(\d+)月\s*-\s*(\d+)月/)
       if (monthRangeMatch) {
         const [, year, startMonth, endMonth] = monthRangeMatch
         return `${startMonth}月–${endMonth}月, ${year}`
       }
 
-      // 匹配单个日期
+      // Match a single date
       const singleDateMatch = range.match(/(\d{4})年(\d+)月(\d+)日/)
       if (singleDateMatch) {
         const [, year, month, day] = singleDateMatch
         return `${month}月${day}日, ${year}`
       }
 
-      // 默认返回原始字符串
+      // Default to returning the original string
       return range
     }
 

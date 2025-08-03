@@ -70,7 +70,7 @@ export const MasonryRoot = () => {
     setActivePanel(action)
   }
 
-  // 监听容器宽度变化
+  // Listen for container width changes
   useEffect(() => {
     const updateContainerWidth = () => {
       setContainerWidth(window.innerWidth)
@@ -84,17 +84,17 @@ export const MasonryRoot = () => {
     }
   }, [])
 
-  // 动态计算列宽
+  // Dynamically calculate column width
   const columnWidth = useMemo(() => {
     const { auto, min, max } = COLUMN_WIDTH_CONFIG
-    const gutter = 4 // 列间距
-    const availableWidth = containerWidth - (isMobile ? 8 : 32) // 移动端和桌面端的 padding 不同
+    const gutter = 4 // Column gutter
+    const availableWidth = containerWidth - (isMobile ? 8 : 32) // Different padding for mobile and desktop
 
     if (columns === 'auto') {
       const autoWidth = isMobile ? auto.mobile : auto.desktop
       if (!isMobile) {
         const { maxColumns } = auto
-        // 当屏幕宽度超过一定阈值时，通过计算动态列宽来限制最大列数
+        // When the screen width exceeds a certain threshold, limit the maximum number of columns by calculating the dynamic column width
         const colCount = Math.floor(
           (availableWidth + gutter) / (autoWidth + gutter),
         )
@@ -107,17 +107,17 @@ export const MasonryRoot = () => {
       return autoWidth
     }
 
-    // 自定义列数模式：根据容器宽度和列数计算列宽
+    // Custom column count mode: calculate column width based on container width and column count
     const calculatedWidth = (availableWidth - (columns - 1) * gutter) / columns
 
-    // 根据设备类型设置最小和最大列宽
+    // Set min and max column width based on device type
     const minWidth = isMobile ? min.mobile : min.desktop
     const maxWidth = isMobile ? max.mobile : max.desktop
 
     return Math.max(Math.min(calculatedWidth, maxWidth), minWidth)
   }, [isMobile, columns, containerWidth])
 
-  // 监听滚动，控制浮动组件的显示
+  // Listen for scroll to control the visibility of floating components
   useEffect(() => {
     if (!scrollElement) return
 
@@ -134,7 +134,7 @@ export const MasonryRoot = () => {
 
   return (
     <>
-      {/* 桌面端：左右分布 */}
+      {/* Desktop: distributed left and right */}
       {!isMobile && (
         <>
           <DateRangeIndicator
@@ -146,7 +146,7 @@ export const MasonryRoot = () => {
         </>
       )}
 
-      {/* 移动端：垂直堆叠 */}
+      {/* Mobile: stacked vertically */}
       {isMobile && !!dateRange.formattedRange && (
         <div className="fixed top-0 right-0 left-0 z-50">
           <DateRangeIndicator
@@ -263,18 +263,18 @@ export const MasonryItem = memo(
     hasAnimated: boolean
     onAnimationComplete: () => void
   }) => {
-    // 为每个 item 生成唯一的 key 用于追踪
+    // Generate a unique key for each item for tracking
     const itemKey = useMemo(() => {
       return (data as PhotoManifest).id
     }, [data])
 
-    // 只对第一屏的 items 做动画，且只在首次加载时
+    // Only animate items on the first screen, and only on the first load
     const shouldAnimate = !hasAnimated && index < FIRST_SCREEN_ITEMS_COUNT
 
-    // 计算动画延迟
+    // Calculate animation delay
     const delay = shouldAnimate ? Math.min(index * 0.05, 0.3) : 0
 
-    // Framer Motion 动画变体
+    // Framer Motion animation variants
     const itemVariants = {
       hidden: {
         opacity: 0,

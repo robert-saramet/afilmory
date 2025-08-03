@@ -24,15 +24,15 @@ export function ogImagePlugin(options: OGImagePluginOptions = {}): Plugin {
   return {
     name: 'og-image-plugin',
     async buildStart() {
-      // 在构建开始时生成 OG 图片
+      // Generate OG image at the start of the build
       const timestamp = Date.now()
       const fileName = `og-image-${timestamp}.png`
 
       try {
-        // 生成 favicon
+        // Generate favicon
         await generateFavicons()
 
-        // 生成 OG 图片
+        // Generate OG image
         await generateOGImage({
           title,
           description,
@@ -43,7 +43,7 @@ export function ogImagePlugin(options: OGImagePluginOptions = {}): Plugin {
         ogImagePath = `/${fileName}`
         console.info(`🖼️  OG image generated: ${ogImagePath}`)
 
-        // 清理旧的 OG 图片
+        // Clean up old OG images
         await cleanupOldOGImages(3)
       } catch (error) {
         console.error('Failed to generate OG image:', error)
@@ -57,7 +57,7 @@ export function ogImagePlugin(options: OGImagePluginOptions = {}): Plugin {
           return html
         }
 
-        // 生成 meta 标签
+        // Generate meta tags
         const metaTags = `
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -90,7 +90,7 @@ export function ogImagePlugin(options: OGImagePluginOptions = {}): Plugin {
     <link rel="shortcut icon" href="/favicon.ico" />
         `
 
-        // 在 </head> 标签前插入 meta 标签
+        // Insert meta tags before the </head> tag
         return html.replace('</head>', `${metaTags}\n  </head>`)
       },
     },

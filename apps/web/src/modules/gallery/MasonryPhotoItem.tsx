@@ -53,7 +53,7 @@ export const MasonryPhotoItem = ({
     return formattedDate
   }, [])
 
-  // Live Photo 相关状态
+  // Live Photo related states
   const [isPlayingLivePhoto, setIsPlayingLivePhoto] = useState(false)
   const [livePhotoVideoLoaded, setLivePhotoVideoLoaded] = useState(false)
   const [isConvertingVideo, setIsConvertingVideo] = useState(false)
@@ -80,14 +80,14 @@ export const MasonryPhotoItem = ({
     }
   }
 
-  // 计算基于宽度的高度
+  // Calculate height based on width
   const calculatedHeight = width / data.aspectRatio
 
-  // 格式化 EXIF 数据
+  // Format EXIF data
   const formatExifData = () => {
     const { exif } = data
 
-    // 安全处理：如果 exif 不存在或为空，则返回空对象
+    // Safety handling: return an empty object if exif is null or empty
     if (!exif) {
       return {
         focalLength35mm: null,
@@ -97,7 +97,7 @@ export const MasonryPhotoItem = ({
       }
     }
 
-    // 等效焦距 (35mm)
+    // Equivalent focal length (35mm)
     const focalLength35mm = exif.FocalLengthIn35mmFormat
       ? Number.parseInt(exif.FocalLengthIn35mmFormat)
       : exif.FocalLength
@@ -107,11 +107,11 @@ export const MasonryPhotoItem = ({
     // ISO
     const iso = exif.ISO
 
-    // 快门速度
+    // Shutter speed
     const exposureTime = exif.ExposureTime
     const shutterSpeed = exposureTime ? `${exposureTime}s` : null
 
-    // 光圈
+    // Aperture
     const aperture = exif.FNumber ? `f/${exif.FNumber}` : null
 
     return {
@@ -124,10 +124,10 @@ export const MasonryPhotoItem = ({
 
   const exifData = formatExifData()
 
-  // 使用通用的图片格式提取函数
+  // Use a generic function to extract the image format
   const imageFormat = getImageFormat(data.originalUrl || data.s3Key || '')
 
-  // Live Photo 视频加载逻辑
+  // Live Photo video loading logic
   useEffect(() => {
     if (
       !data.isLivePhoto ||
@@ -143,7 +143,7 @@ export const MasonryPhotoItem = ({
     const loadLivePhotoVideo = async () => {
       setIsConvertingVideo(true)
 
-      // 创建新的 image loader manager
+      // Create a new image loader manager
       const imageLoaderManager = new ImageLoaderManager()
       imageLoaderManagerRef.current = imageLoaderManager
 
@@ -178,7 +178,7 @@ export const MasonryPhotoItem = ({
     livePhotoVideoLoaded,
   ])
 
-  // Live Photo hover 处理（仅在桌面端）
+  // Live Photo hover handling (desktop only)
   const handleMouseEnter = useCallback(() => {
     if (
       isMobileDevice ||
@@ -197,7 +197,7 @@ export const MasonryPhotoItem = ({
         video.currentTime = 0
         video.play()
       }
-    }, 200) // 200ms hover 延迟
+    }, 200) // 200ms hover delay
   }, [
     data.isLivePhoto,
     livePhotoVideoLoaded,
@@ -221,12 +221,12 @@ export const MasonryPhotoItem = ({
     }
   }, [isPlayingLivePhoto])
 
-  // 视频播放结束处理
+  // Video playback end handling
   const handleVideoEnded = useCallback(() => {
     setIsPlayingLivePhoto(false)
   }, [])
 
-  // 清理定时器
+  // Clear timer
   useEffect(() => {
     return () => {
       if (hoverTimerRef.current) {
@@ -248,7 +248,7 @@ export const MasonryPhotoItem = ({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Blurhash 占位符 */}
+      {/* Blurhash placeholder */}
       {data.thumbHash && (
         <Thumbhash thumbHash={data.thumbHash} className="absolute inset-0" />
       )}
@@ -266,7 +266,7 @@ export const MasonryPhotoItem = ({
         />
       )}
 
-      {/* Live Photo 视频 */}
+      {/* Live Photo video */}
       {data.isLivePhoto && data.livePhotoVideoUrl && (
         <video
           ref={videoRef}
@@ -280,7 +280,7 @@ export const MasonryPhotoItem = ({
         />
       )}
 
-      {/* 错误状态 */}
+      {/* Error state */}
       {imageError && (
         <div className="bg-fill-quaternary text-text-tertiary absolute inset-0 flex items-center justify-center">
           <div className="text-center">
@@ -290,7 +290,7 @@ export const MasonryPhotoItem = ({
         </div>
       )}
 
-      {/* Live Photo 标识 */}
+      {/* Live Photo indicator */}
       {data.isLivePhoto && (
         <div
           className={clsx(
@@ -328,15 +328,15 @@ export const MasonryPhotoItem = ({
         </div>
       )}
 
-      {/* 图片信息和 EXIF 覆盖层 */}
+      {/* Image information and EXIF overlay */}
       {imageLoaded && (
         <div className="pointer-events-none">
-          {/* 渐变背景 - 独立的层 */}
+          {/* Gradient background - separate layer */}
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-          {/* 内容层 - 独立的层以支持 backdrop-filter */}
+          {/* Content layer - separate layer to support backdrop-filter */}
           <div className="absolute inset-x-0 bottom-0 p-4 pb-0 text-white">
-            {/* 基本信息和标签 section */}
+            {/* Basic info and tags section */}
             <div className="mb-3 [&_*]:duration-300">
               <h3 className="mb-2 truncate text-sm font-medium opacity-0 group-hover:opacity-100">
                 {generatePhotoTitle(data)}
@@ -347,7 +347,7 @@ export const MasonryPhotoItem = ({
                 </p>
               )}
 
-              {/* 基本信息 */}
+              {/* Basic information */}
               <div className="mb-2 flex flex-wrap gap-2 text-xs text-white/80 opacity-0 group-hover:opacity-100">
                 <span>{imageFormat}</span>
                 <span>•</span>
@@ -373,7 +373,7 @@ export const MasonryPhotoItem = ({
               )}
             </div>
 
-            {/* EXIF 信息网格 */}
+            {/* EXIF info grid */}
             {calculatedHeight >= 200 && (
               <div className="grid grid-cols-2 gap-2 pb-4 text-xs">
                 {exifData.focalLength35mm && (

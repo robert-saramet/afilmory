@@ -3,7 +3,7 @@ import type { LoadingCallbacks } from '~/lib/image-loader-manager'
 
 import type { ConversionResult, ImageConverterStrategy } from '../type'
 
-// TIFF 转换策略
+// TIFF conversion strategy
 export class TiffConverterStrategy implements ImageConverterStrategy {
   getName(): string {
     return 'TIFF'
@@ -25,13 +25,13 @@ export class TiffConverterStrategy implements ImageConverterStrategy {
     const { onLoadingStateUpdate } = callbacks || {}
 
     try {
-      // 更新转换状态
+      // Update conversion status
       onLoadingStateUpdate?.({
         isConverting: true,
         conversionMessage: 'Converting TIFF image...',
       })
 
-      // 执行转换逻辑
+      // Execute conversion logic
       const result = await this.convertTiffToJpeg(blob)
 
       return {
@@ -46,38 +46,38 @@ export class TiffConverterStrategy implements ImageConverterStrategy {
     }
   }
 
-  // 浏览器支持检测
+  // Browser support detection
   private isBrowserSupportTiff(): boolean {
-    // safari 支持tiff
+    // Safari supports TIFF
     if (isSafari) {
       return true
     }
     return false
   }
 
-  // 转换实现
+  // Conversion implementation
   private async convertTiffToJpeg(
     blob: Blob,
   ): Promise<{ url: string; size: number }> {
     try {
-      // 动态导入 tiff 库
+      // Dynamically import tiff library
       const tiff = await import('tiff')
 
-      // 将 Blob 转换为 ArrayBuffer
+      // Convert Blob to ArrayBuffer
       const arrayBuffer = await blob.arrayBuffer()
 
-      // 解码 TIFF 数据
+      // Decode TIFF data
       const ifds = tiff.decode(arrayBuffer)
 
       if (!ifds || ifds.length === 0) {
         throw new Error('Failed to decode TIFF image')
       }
 
-      // 获取第一个图像帧（页面）
+      // Get the first image frame (page)
       const ifd = ifds[0]
       const { width, height, data, bitsPerSample } = ifd
 
-      // 创建 Canvas 元素
+      // Create Canvas element
       const canvas = document.createElement('canvas')
       const ctx = canvas.getContext('2d')
 
@@ -88,17 +88,17 @@ export class TiffConverterStrategy implements ImageConverterStrategy {
       canvas.width = width
       canvas.height = height
 
-      // 创建 ImageData
+      // Create ImageData
       const imageData = ctx.createImageData(width, height)
       const pixelData = imageData.data
 
-      // 根据位深度和通道数处理像素数据
+      // Process pixel data based on bit depth and number of channels
       this.processPixelData(data, pixelData, bitsPerSample, ifd.alpha)
 
-      // 将数据绘制到 Canvas
+      // Draw data to Canvas
       ctx.putImageData(imageData, 0, 0)
 
-      // 转换为 JPEG Blob
+      // Convert to JPEG Blob
       return new Promise((resolve, reject) => {
         canvas.toBlob(
           (convertedBlob) => {
@@ -119,14 +119,14 @@ export class TiffConverterStrategy implements ImageConverterStrategy {
     }
   }
 
-  // 处理像素数据
+  // Process pixel data
   private processPixelData(
     sourceData: Uint8Array | Uint16Array | Float32Array | Float64Array,
     targetData: Uint8ClampedArray,
     bitsPerSample: number,
     hasAlpha = false,
   ): void {
-    const channels = hasAlpha ? 4 : 3 // RGBA 或 RGB
+    const channels = hasAlpha ? 4 : 3 // RGBA or RGB
     const pixelCount = targetData.length / 4
 
     for (let i = 0; i < pixelCount; i++) {
@@ -135,7 +135,7 @@ export class TiffConverterStrategy implements ImageConverterStrategy {
 
       switch (bitsPerSample) {
         case 8: {
-          // 8位数据
+          // 8-bit data
           const data = sourceData as Uint8Array
           targetData[dstIndex] = data[srcIndex] || 0 // R
           targetData[dstIndex + 1] =
@@ -147,7 +147,7 @@ export class TiffConverterStrategy implements ImageConverterStrategy {
           break
         }
         case 16: {
-          // 16位数据，需要转换为8位
+          // 16-bit data, needs to be converted to 8-bit
           const data = sourceData as Uint16Array
           targetData[dstIndex] = Math.round((data[srcIndex] || 0) / 257) // R
           targetData[dstIndex + 1] =
@@ -165,7 +165,7 @@ export class TiffConverterStrategy implements ImageConverterStrategy {
           break
         }
         case 32: {
-          // 32位浮点数据
+          // 32-bit float data
           const data = sourceData as Float32Array | Float64Array
           targetData[dstIndex] = Math.round((data[srcIndex] || 0) * 255) // R
           targetData[dstIndex + 1] =

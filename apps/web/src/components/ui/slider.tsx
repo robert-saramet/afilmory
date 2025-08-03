@@ -30,21 +30,21 @@ export const Slider = ({
   const sliderRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
 
-  // 将值转换为位置百分比
+  // Convert value to position percentage
   const getPositionFromValue = useCallback(
     (val: number | 'auto') => {
-      if (val === 'auto') return 5 // 自动档位置稍微偏右一点
-      // 数值档从 15% 开始到 100%
+      if (val === 'auto') return 5 // Auto mode position is slightly to the right
+      // Numeric range starts from 15% to 100%
       return 15 + ((val - min) / (max - min)) * 85
     },
     [min, max],
   )
 
-  // 将位置百分比转换为值
+  // Convert position percentage to value
   const getValueFromPosition = useCallback(
     (position: number) => {
-      if (position <= 12) return 'auto' // 左侧 12% 区域为自动档
-      const normalizedPosition = (position - 15) / 85 // 从 15% 开始的 85% 区域为数值
+      if (position <= 12) return 'auto' // The left 12% area is for auto mode
+      const normalizedPosition = (position - 15) / 85 // The 85% area starting from 15% is for numeric values
       const rawValue = min + Math.max(0, normalizedPosition) * (max - min)
       return Math.round(Math.max(min, rawValue) / step) * step
     },
@@ -93,13 +93,13 @@ export const Slider = ({
 
   return (
     <div className={clsxm('w-full', className)}>
-      {/* 标签 */}
+      {/* Labels */}
       <div className="text-text-secondary mb-2 flex justify-between text-xs">
         <span>{finalAutoLabel}</span>
         <span>{max}</span>
       </div>
 
-      {/* 滑块轨道 */}
+      {/* Slider track */}
       <div
         ref={sliderRef}
         className={clsxm(
@@ -108,15 +108,15 @@ export const Slider = ({
         )}
         onPointerDown={handlePointerDown}
       >
-        {/* 背景轨道 */}
+        {/* Background track */}
         <div
           ref={trackRef}
           className="absolute top-1/2 h-1.5 w-full -translate-y-1/2 rounded-full bg-gray-200 dark:bg-gray-700"
         >
-          {/* 自动档区域指示 */}
+          {/* Auto mode area indicator */}
           <div className="absolute top-0 left-0 h-full w-[12%] rounded-l-full bg-green-100 dark:bg-green-900/50" />
 
-          {/* 激活区域 */}
+          {/* Active area */}
           <div
             className={clsxm(
               'absolute top-0 h-full rounded-full transition-all duration-150 max-w-full',
@@ -129,7 +129,7 @@ export const Slider = ({
           />
         </div>
 
-        {/* 滑块把手 */}
+        {/* Slider handle */}
         <div
           className={clsxm(
             'absolute top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-lg transition-all duration-150',
@@ -142,7 +142,7 @@ export const Slider = ({
           }}
         />
 
-        {/* 数值刻度 */}
+        {/* Numeric scale */}
         <div className="absolute top-full mt-1 flex w-full text-xs text-gray-400">
           <div className="w-[15%] text-left">
             <span
@@ -172,9 +172,9 @@ export const Slider = ({
         </div>
       </div>
 
-      {/* 当前值显示 */}
+      {/* Current value display */}
       <div className="mt-8 text-center text-sm font-medium text-gray-700 dark:text-gray-300">
-        {value === 'auto' ? finalAutoLabel : `${value} 列`}
+        {value === 'auto' ? finalAutoLabel : `${value} ${t('slider.columns')}`}
       </div>
     </div>
   )

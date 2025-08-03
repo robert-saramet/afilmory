@@ -45,7 +45,7 @@ export const ExifPanel: FC<{
   const decimalLatitude = gpsData?.latitude || null
   const decimalLongitude = gpsData?.longitude || null
 
-  // 使用通用的图片格式提取函数
+  // Use a generic function to extract the image format
   const imageFormat = getImageFormat(
     currentPhoto.originalUrl || currentPhoto.s3Key || '',
   )
@@ -94,7 +94,7 @@ export const ExifPanel: FC<{
         viewportClassName="px-4 pb-4 [&_*]:select-text"
       >
         <div className={`space-y-${isMobile ? '3' : '4'}`}>
-          {/* 基本信息和标签 - 合并到一个 section */}
+          {/* Basic info and tags - combined into one section */}
           <div>
             <h4 className="mb-2 text-sm font-medium text-white/80">
               {t('exif.basic.info')}
@@ -228,7 +228,7 @@ export const ExifPanel: FC<{
                 </div>
               )}
 
-            {/* 标签信息 - 移到基本信息 section 内 */}
+            {/* Tag info - moved inside the basic info section */}
             {currentPhoto.tags && currentPhoto.tags.length > 0 && (
               <div className="mt-3 mb-3">
                 <h4 className="mb-2 text-sm font-medium text-white/80">
@@ -256,14 +256,14 @@ export const ExifPanel: FC<{
             )}
           </div>
 
-          {/* 影调分析和直方图 */}
+          {/* Tone analysis and histogram */}
           {currentPhoto.toneAnalysis && (
             <div>
               <h4 className="mb-2 text-sm font-medium text-white/80">
                 {t('exif.tone.analysis.title')}
               </h4>
               <div>
-                {/* 影调信息 */}
+                {/* Tone information */}
                 <Row
                   label={t('exif.tone.type')}
                   value={(() => {
@@ -298,7 +298,7 @@ export const ExifPanel: FC<{
                   />
                 </div>
 
-                {/* 直方图 */}
+                {/* Histogram */}
                 <div className="mb-3">
                   <div className="mb-2 text-xs font-medium text-white/70">
                     {t('exif.histogram')}
@@ -389,7 +389,7 @@ export const ExifPanel: FC<{
                 </div>
               )}
 
-              {/* 新增：拍摄模式信息 */}
+              {/* New: Capture mode information */}
               {(formattedExifData.exposureMode ||
                 formattedExifData.exposureProgram ||
                 formattedExifData.meteringMode ||
@@ -621,7 +621,7 @@ export const ExifPanel: FC<{
                 </div>
               )}
 
-              {/* 新增：技术参数 */}
+              {/* New: Technical parameters */}
               {(formattedExifData.brightnessValue ||
                 formattedExifData.shutterSpeedValue ||
                 formattedExifData.apertureValue ||

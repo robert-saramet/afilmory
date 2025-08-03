@@ -1,6 +1,6 @@
 import type { LoadingCallbacks } from '../image-loader-manager'
 
-// 转换结果接口
+// Conversion result interface
 export interface ConversionResult {
   url: string
   convertedSize: number
@@ -8,15 +8,15 @@ export interface ConversionResult {
   originalSize: number
 }
 
-// 图像转换策略接口
+// Image conversion strategy interface
 export interface ImageConverterStrategy {
   /**
-   * 检测是否需要转换此格式
+   * Check if this format needs to be converted
    */
   shouldConvert: (blob: Blob) => Promise<boolean>
 
   /**
-   * 执行转换
+   * Execute conversion
    */
   convert: (
     blob: Blob,
@@ -25,12 +25,12 @@ export interface ImageConverterStrategy {
   ) => Promise<ConversionResult>
 
   /**
-   * 策略名称，用于日志和调试
+   * Strategy name for logging and debugging
    */
   getName: () => string
 
   /**
-   * 获取支持的格式
+   * Get supported formats
    */
   getSupportedFormats: () => string[]
 }

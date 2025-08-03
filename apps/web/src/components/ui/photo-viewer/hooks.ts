@@ -122,7 +122,7 @@ export const useImageLoader = (
         console.error('Failed to load image:', loadError)
         setError?.(true)
 
-        // 显示错误状态，而不是完全隐藏图片
+        // Show error state instead of completely hiding the image
         loadingIndicatorRef?.current?.updateLoadingState({
           isVisible: true,
           isError: true,
@@ -165,13 +165,13 @@ export const useScaleIndicator = (
 
   const handleScaleChange = useCallback(
     (scale: number, isZoomed: boolean) => {
-      // 更新缩放倍率并显示提示
+      // Update zoom ratio and show indicator
       startTransition(() => {
         setCurrentScale?.(scale)
         setShowScaleIndicator?.(true)
       })
 
-      // 清除之前的定时器
+      // Clear previous timer
       if (scaleIndicatorTimeoutRef.current) {
         clearTimeout(scaleIndicatorTimeoutRef.current)
       }
@@ -185,7 +185,7 @@ export const useScaleIndicator = (
     [onZoomChange, setCurrentScale, setShowScaleIndicator],
   )
 
-  // WebGL Image Viewer 的缩放变化处理
+  // WebGL Image Viewer zoom change handler
   const onTransformed = useCallback(
     (originalScale: number, relativeScale: number) => {
       const isZoomed = Math.abs(relativeScale - 1) > 0.01
@@ -194,7 +194,7 @@ export const useScaleIndicator = (
     [handleScaleChange],
   )
 
-  // DOM Image Viewer 的缩放变化处理
+  // DOM Image Viewer zoom change handler
   const onDOMTransformed = useCallback(
     (isZoomed: boolean, scale: number) => {
       handleScaleChange(scale, isZoomed)

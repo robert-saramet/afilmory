@@ -38,7 +38,7 @@ export const SharePanel = ({ photo, trigger, blobSrc }: SharePanelProps) => {
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
 
-  // 社交媒体分享选项
+  // Social media share options
   const socialOptions: SocialShareOption[] = [
     {
       id: 'twitter',
@@ -80,7 +80,7 @@ export const SharePanel = ({ photo, trigger, blobSrc }: SharePanelProps) => {
     const shareText = t('photo.share.text', { title: shareTitle })
 
     try {
-      // 优先使用 blobSrc（转换后的图片），如果没有则使用 originalUrl
+      // Prioritize using blobSrc (converted image), fallback to originalUrl if not available
       const imageUrl = blobSrc || photo.originalUrl
       const response = await fetch(imageUrl)
       const blob = await response.blob()
@@ -88,7 +88,7 @@ export const SharePanel = ({ photo, trigger, blobSrc }: SharePanelProps) => {
         type: blob.type || 'image/jpeg',
       })
 
-      // 检查是否支持文件分享
+      // Check if file sharing is supported
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({
           title: shareTitle,
@@ -97,7 +97,7 @@ export const SharePanel = ({ photo, trigger, blobSrc }: SharePanelProps) => {
           files: [file],
         })
       } else {
-        // 不支持文件分享，只分享链接
+        // File sharing not supported, only share the link
         await navigator.share({
           title: shareTitle,
           text: shareText,
@@ -106,7 +106,7 @@ export const SharePanel = ({ photo, trigger, blobSrc }: SharePanelProps) => {
       }
       setIsOpen(false)
     } catch {
-      // 如果分享失败，复制链接
+      // If sharing fails, copy the link
       await navigator.clipboard.writeText(shareUrl)
       toast.success(t('photo.share.link.copied'))
       setIsOpen(false)
@@ -160,7 +160,7 @@ export const SharePanel = ({ photo, trigger, blobSrc }: SharePanelProps) => {
     [photo.title, t],
   )
 
-  // 功能选项
+  // Action options
   const actionOptions: ShareOption[] = [
     ...(typeof navigator !== 'undefined' && 'share' in navigator
       ? [
@@ -215,7 +215,7 @@ export const SharePanel = ({ photo, trigger, blobSrc }: SharePanelProps) => {
                   'dark:shadow-black/50',
                 )}
               >
-                {/* 标题区域 */}
+                {/* Title area */}
                 <div className="mb-4 text-center">
                   <h3 className="text-text font-semibold">
                     {t('photo.share.title')}
@@ -227,7 +227,7 @@ export const SharePanel = ({ photo, trigger, blobSrc }: SharePanelProps) => {
                   )}
                 </div>
 
-                {/* 社交媒体分享 - 第一排 */}
+                {/* Social media share - first row */}
                 <div className="mb-6">
                   <div className="mb-3">
                     <h4 className="text-text-secondary text-xs font-medium tracking-wide uppercase">
@@ -266,7 +266,7 @@ export const SharePanel = ({ photo, trigger, blobSrc }: SharePanelProps) => {
                   </div>
                 </div>
 
-                {/* 嵌入代码 - 第二排 */}
+                {/* Embed code - second row */}
                 {injectConfig.useNext && (
                   <div className="mb-6">
                     <div className="mb-3">
@@ -304,7 +304,7 @@ export const SharePanel = ({ photo, trigger, blobSrc }: SharePanelProps) => {
                   </div>
                 )}
 
-                {/* 功能选项 - 第三排 */}
+                {/* Action options - third row */}
                 <div>
                   <div className="mb-3">
                     <h4 className="text-text-secondary text-xs font-medium tracking-wide uppercase">

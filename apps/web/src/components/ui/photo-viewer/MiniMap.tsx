@@ -21,7 +21,7 @@ export const MiniMap = ({ latitude, longitude, photoId }: MiniMapProps) => {
     setIsLoaded(true)
   }, [])
 
-  // 检查是否有有效的GPS坐标
+  // Check for valid GPS coordinates
   const hasValidCoordinates = latitude !== 0 && longitude !== 0
 
   if (!hasValidCoordinates) {
@@ -43,7 +43,7 @@ export const MiniMap = ({ latitude, longitude, photoId }: MiniMapProps) => {
         interactive={false}
       />
 
-      {/* 中心标记 */}
+      {/* Center marker */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <div className="relative">
           <div className="absolute top-1/2 left-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 animate-ping rounded-full bg-blue-400 opacity-75" />
@@ -51,14 +51,14 @@ export const MiniMap = ({ latitude, longitude, photoId }: MiniMapProps) => {
         </div>
       </div>
 
-      {/* 加载状态 */}
+      {/* Loading state */}
       {!isLoaded && (
         <div className="bg-material-ultra-thin absolute inset-0 flex items-center justify-center backdrop-blur-sm">
           <div className="text-xs text-white/60">{t('minimap.loading')}</div>
         </div>
       )}
 
-      {/* 点击跳转到explore页面的遮罩 */}
+      {/* Overlay to navigate to the explore page on click */}
       <Link
         to={`/explory?photoId=${photoId}`}
         target="_blank"

@@ -54,41 +54,41 @@ function convertMOVtoMP4(
   })
 }
 
-// 检测浏览器是否原生支持 MOV 格式
+// Detect if the browser natively supports the MOV format
 function isBrowserSupportMov(): boolean {
-  // 创建一个临时的 video 元素来测试格式支持
+  // Create a temporary video element to test format support
   const video = document.createElement('video')
 
-  // 检测是否支持 MOV 容器格式
+  // Check if the MOV container format is supported
   const canPlayMov = video.canPlayType('video/quicktime')
 
-  // Safari 通常原生支持 MOV
+  // Safari usually supports MOV natively
   if (isSafari) {
     return true
   }
 
-  // 对于其他浏览器，只有当 canPlayType 明确返回支持时才认为支持
-  // 'probably' 或 'maybe' 表示支持，空字符串表示不支持
+  // For other browsers, it is considered supported only when canPlayType explicitly returns support
+  // 'probably' or 'maybe' indicates support, an empty string indicates no support
   return canPlayMov === 'probably' || canPlayMov === 'maybe'
 }
 
-// 检测是否需要转换 mov 文件
+// Detect if mov file needs to be converted
 export function needsVideoConversion(url: string): boolean {
   const lowerUrl = url.toLowerCase()
   const isMovFile = lowerUrl.includes('.mov') || lowerUrl.endsWith('.mov')
 
-  // 如果不是 MOV 文件，不需要转换
+  // If it is not a MOV file, no conversion is required
   if (!isMovFile) {
     return false
   }
 
-  // 如果浏览器原生支持 MOV，不需要转换
+  // If the browser natively supports MOV, no conversion is required
   if (isBrowserSupportMov()) {
     console.info('Browser natively supports MOV format, skipping conversion')
     return false
   }
 
-  // 浏览器不支持 MOV，需要转换
+  // The browser does not support MOV, conversion is required
   console.info('Browser does not support MOV format, conversion needed')
   return true
 }
@@ -97,7 +97,7 @@ export async function convertMovToMp4(
   videoUrl: string,
 
   onProgress?: (progress: ConversionProgress) => void,
-  forceReconvert = false, // 添加强制重新转换参数
+  forceReconvert = false, // Add force reconversion parameter
 ): Promise<ConversionResult> {
   const { t } = getI18n()
   // Check cache first, unless forced to reconvert

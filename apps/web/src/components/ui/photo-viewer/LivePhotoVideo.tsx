@@ -13,15 +13,15 @@ import type { ImageLoaderManager } from '~/lib/image-loader-manager'
 import type { LoadingIndicatorRef } from './LoadingIndicator'
 
 interface LivePhotoVideoProps {
-  /** Live Photo 视频 URL */
+  /** Live Photo video URL */
   videoUrl: string
-  /** 图片加载管理器实例 */
+  /** Image loader manager instance */
   imageLoaderManager: ImageLoaderManager
-  /** 加载指示器引用 */
+  /** Loading indicator reference */
   loadingIndicatorRef: React.RefObject<LoadingIndicatorRef | null>
-  /** 是否是当前图片 */
+  /** Whether it is the current image */
   isCurrentImage: boolean
-  /** 自定义样式类名 */
+  /** Custom style class name */
   className?: string
   onPlayingChange?: (isPlaying: boolean) => void
 }

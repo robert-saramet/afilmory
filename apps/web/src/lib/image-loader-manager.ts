@@ -59,10 +59,10 @@ const regularImageCache: LRUCache<string, ImageCacheResult> = new LRUCache<
 )
 
 /**
- * 生成普通图片的缓存键
+ * Generate cache key for regular images
  */
 function generateRegularImageCacheKey(url: string): string {
-  // 使用原始 URL 作为唯一键
+  // Use the original URL as the unique key
   return url
 }
 
@@ -71,18 +71,18 @@ export class ImageLoaderManager {
   private delayTimer: NodeJS.Timeout | null = null
 
   /**
-   * 验证 Blob 是否为有效的图片格式
-   * 使用 magic number 检测文件类型，而不是依赖 MIME 类型
+   * Validate if the Blob is a valid image format
+   * Use magic number to detect file type, instead of relying on MIME type
    */
   private async isValidImageBlob(blob: Blob): Promise<boolean> {
-    // 检查文件大小（至少应该有一些字节）
+    // Check file size (should be at least a few bytes)
     if (blob.size === 0) {
       console.warn('Empty blob detected')
       return false
     }
 
     try {
-      // 使用 magic number 检测文件类型
+      // Use magic number to detect file type
       const fileType = await fileTypeFromBlob(blob)
 
       if (!fileType) {
@@ -90,7 +90,7 @@ export class ImageLoaderManager {
         return false
       }
 
-      // 检查是否为图片格式
+      // Check if it is an image format
       const isValidImage = fileType.mime.startsWith('image/')
 
       if (!isValidImage) {
@@ -128,7 +128,7 @@ export class ImageLoaderManager {
         xhr.onload = async () => {
           if (xhr.status === 200) {
             try {
-              // 验证响应是否为图片
+              // Validate if the response is an image
               const blob = xhr.response as Blob
               if (!(await this.isValidImageBlob(blob))) {
                 onLoadingStateUpdate?.({
@@ -141,7 +141,7 @@ export class ImageLoaderManager {
 
               const result = await this.processImageBlob(
                 blob,
-                src, // 传递原始 URL
+                src, // Pass the original URL
                 callbacks,
               )
               resolve(result)
@@ -202,7 +202,7 @@ export class ImageLoaderManager {
     return new Promise((resolve, reject) => {
       const processVideo = async () => {
         try {
-          // 检查是否需要转换
+        // Check if conversion is needed
           if (needsVideoConversion(livePhotoVideoUrl)) {
             const result = await this.convertVideo(
               livePhotoVideoUrl,
@@ -226,7 +226,7 @@ export class ImageLoaderManager {
         }
       }
 
-      // 异步处理视频，不阻塞图片显示
+    // Asynchronously process video without blocking image display
       processVideo()
     })
   }
@@ -239,7 +239,7 @@ export class ImageLoaderManager {
     const { onError: _onError, onLoadingStateUpdate } = callbacks
 
     try {
-      // 使用策略模式检测并转换图像
+      // Use strategy pattern to detect and convert images
       const conversionResult = await imageConverterManager.convertImage(
         blob,
         originalUrl,
@@ -247,7 +247,7 @@ export class ImageLoaderManager {
       )
 
       if (conversionResult) {
-        // 需要转换的格式
+        // Formats that need conversion
         console.info(
           `Image converted: ${(blob.size / 1024).toFixed(1)}KB → ${(conversionResult.convertedSize / 1024).toFixed(1)}KB`,
         )
@@ -262,13 +262,13 @@ export class ImageLoaderManager {
           convertedUrl: conversionResult.url,
         }
       } else {
-        // 不需要转换的普通图片
+        // Regular images that do not need conversion
         return this.processRegularImage(blob, originalUrl, callbacks)
       }
     } catch (conversionError) {
       console.error('Image conversion failed:', conversionError)
 
-      // 转换失败时，尝试按普通图片处理
+      // If conversion fails, try to process as a regular image
       try {
         console.info('Falling back to regular image processing')
         return this.processRegularImage(blob, originalUrl, callbacks)
@@ -291,15 +291,15 @@ export class ImageLoaderManager {
 
   private processRegularImage(
     blob: Blob,
-    originalUrl: string, // 添加原始 URL 参数
+    originalUrl: string, // Add original URL parameter
     callbacks: LoadingCallbacks,
   ): ImageLoadResult {
     const { onLoadingStateUpdate } = callbacks
 
-    // 生成缓存键
-    const cacheKey = generateRegularImageCacheKey(originalUrl) // 使用原始 URL
+    // Generate cache key
+    const cacheKey = generateRegularImageCacheKey(originalUrl) // Use the original URL
 
-    // 检查缓存
+    // Check cache
     const cachedResult = regularImageCache.get(cacheKey)
     if (cachedResult) {
       console.info('Using cached regular image result', cachedResult)
@@ -314,7 +314,7 @@ export class ImageLoaderManager {
       }
     }
 
-    // 普通图片格式
+    // Regular image format
     const url = URL.createObjectURL(blob)
 
     const result: ImageCacheResult = {
@@ -323,7 +323,7 @@ export class ImageLoaderManager {
       format: blob.type,
     }
 
-    // 缓存结果
+    // Cache result
     regularImageCache.set(cacheKey, result)
     console.info(
       `Regular image processed and cached: ${(blob.size / 1024).toFixed(1)}KB, URL: ${originalUrl}`,
@@ -346,7 +346,7 @@ export class ImageLoaderManager {
   ): Promise<VideoProcessResult> {
     const { onLoadingStateUpdate } = callbacks
 
-    // 更新加载指示器显示转换进度
+    // Update loading indicator to show conversion progress
     onLoadingStateUpdate?.({
       isVisible: true,
       isConverting: true,
@@ -358,12 +358,12 @@ export class ImageLoaderManager {
     const i18n = jotaiStore.get(i18nAtom)
 
     const result = await convertMovToMp4(livePhotoVideoUrl, (progress) => {
-      // 检查是否包含编码器信息（支持多语言）
+      // Check if it contains encoder information (supports multiple languages)
       const codecKeywords: string[] = [
-        i18n.t('video.codec.keyword'), // 翻译键
+        i18n.t('video.codec.keyword'), // Translation key
         'encoder',
         'codec',
-        '编码器', // 备用关键词
+        '编码器', // Fallback keyword
       ]
       const isCodecInfo = codecKeywords.some((keyword: string) =>
         progress.message.toLowerCase().includes(keyword.toLowerCase()),
@@ -415,7 +415,7 @@ export class ImageLoaderManager {
     livePhotoVideoUrl: string,
     videoElement: HTMLVideoElement,
   ): Promise<VideoProcessResult> {
-    // 直接使用原始视频
+    // Use original video directly
     videoElement.src = livePhotoVideoUrl
     videoElement.load()
 
@@ -432,13 +432,13 @@ export class ImageLoaderManager {
   }
 
   cleanup() {
-    // 清理定时器
+    // Clear timer
     if (this.delayTimer) {
       clearTimeout(this.delayTimer)
       this.delayTimer = null
     }
 
-    // 取消正在进行的请求
+    // Cancel ongoing request
     if (this.currentXHR) {
       this.currentXHR.abort()
       this.currentXHR = null
@@ -468,7 +468,7 @@ export function getRegularImageCacheStats(): {
 }
 
 /**
- * 根据原始 URL 移除特定的普通图片缓存项
+ * Remove specific regular image cache items based on the original URL
  */
 export function removeRegularImageCacheByUrl(originalUrl: string): boolean {
   const cacheKey = generateRegularImageCacheKey(originalUrl)

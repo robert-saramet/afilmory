@@ -4,9 +4,9 @@ import type {
 } from '@afilmory/builder/types/photo.js'
 
 /**
- * 将压缩的直方图解压缩并插值到 256 点位
- * @param compressed 压缩的直方图数据
- * @returns 解压缩后的直方图数据
+ * Decompress the compressed histogram and interpolate to 256 points
+ * @param compressed Compressed histogram data
+ * @returns Decompressed histogram data
  */
 export function decompressHistogram(
   compressed: CompressedHistogramData,
@@ -17,12 +17,12 @@ export function decompressHistogram(
     ) as number[]
 
     for (let i = 0; i < 256; i++) {
-      const compressedIndex = Math.floor(i / 4) // 对应的压缩索引
+      const compressedIndex = Math.floor(i / 4) // Corresponding compression index
       const nextCompressedIndex = Math.min(compressedIndex + 1, 63)
 
-      // 线性插值
-      const t = (i % 4) / 4 // 插值因子 0-0.75
-      const value1 = (data[compressedIndex] || 0) / 10000 // 还原浮点数
+      // Linear interpolation
+      const t = (i % 4) / 4 // Interpolation factor 0-0.75
+      const value1 = (data[compressedIndex] || 0) / 10000 // Restore floating point number
       const value2 = (data[nextCompressedIndex] || 0) / 10000
 
       decompressed[i] = value1 * (1 - t) + value2 * t

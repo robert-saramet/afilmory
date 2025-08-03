@@ -1,27 +1,27 @@
 /**
- * 图像转换策略模式实现
- * 支持多种浏览器原生不支持的图片格式转换
+ * Image conversion strategy pattern implementation
+ * Supports conversion of multiple image formats not natively supported by browsers
  */
 import type { LoadingCallbacks } from '../image-loader-manager'
 import { HeicConverterStrategy } from './strategies/heic'
 import { TiffConverterStrategy } from './strategies/tiff'
 import type { ConversionResult, ImageConverterStrategy } from './type'
 
-// 图像转换策略管理器
+// Image converter strategy manager
 export class ImageConverterManager {
   private strategies = new Map<string, ImageConverterStrategy>()
 
   constructor() {
-    // 注册默认策略
+    // Register default strategies
     this.registerStrategy(new HeicConverterStrategy())
     this.registerStrategy(new TiffConverterStrategy())
   }
 
   /**
-   * 注册转换策略
+   * Register conversion strategy
    */
   registerStrategy(strategy: ImageConverterStrategy): void {
-    // 为每个支持的格式注册策略
+    // Register strategy for each supported format
     strategy.getSupportedFormats().forEach((format) => {
       this.strategies.set(format, strategy)
     })
@@ -29,7 +29,7 @@ export class ImageConverterManager {
   }
 
   /**
-   * 移除转换策略
+   * Remove conversion strategy
    */
   removeStrategy(strategyName: string): boolean {
     let removed = false
@@ -52,7 +52,7 @@ export class ImageConverterManager {
   }
 
   /**
-   * 获取所有已注册的策略
+   * Get all registered strategies
    */
   getStrategies(): ImageConverterStrategy[] {
     const uniqueStrategies = new Set(this.strategies.values())
@@ -60,13 +60,13 @@ export class ImageConverterManager {
   }
 
   /**
-   * 使用 file-type 直接查找适合的转换策略
+   * Use file-type to directly find a suitable conversion strategy
    */
   async findSuitableStrategy(
     blob: Blob,
   ): Promise<ImageConverterStrategy | null> {
     try {
-      // 使用 file-type 检测文件格式
+      // Use file-type to detect file format
       const { fileTypeFromBlob } = await import('file-type')
       const fileType = await fileTypeFromBlob(blob)
 
@@ -77,11 +77,11 @@ export class ImageConverterManager {
 
       console.info(`Detected file type: ${fileType.ext} (${fileType.mime})`)
 
-      // 直接根据 MIME 类型查找策略
+      // Directly find a strategy based on MIME type
       const strategy = this.strategies.get(fileType.mime)
 
       if (strategy) {
-        // 验证策略是否确实需要转换这个文件
+        // Verify if the strategy really needs to convert this file
         const shouldConvert = await strategy.shouldConvert(blob)
         if (shouldConvert) {
           console.info(
@@ -105,7 +105,7 @@ export class ImageConverterManager {
   }
 
   /**
-   * 执行图像转换
+   * Execute image conversion
    */
   async convertImage(
     blob: Blob,
@@ -124,12 +124,12 @@ export class ImageConverterManager {
   }
 
   /**
-   * 获取支持的格式列表
+   * Get a list of supported formats
    */
   getSupportedFormats(): string[] {
     return Array.from(this.strategies.keys())
   }
 }
 
-// 导出单例实例
+// Export singleton instance
 export const imageConverterManager = new ImageConverterManager()

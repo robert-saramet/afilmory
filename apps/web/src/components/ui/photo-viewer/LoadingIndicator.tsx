@@ -8,17 +8,17 @@ interface LoadingState {
   loadingProgress: number
   loadedBytes: number
   totalBytes: number
-  conversionMessage?: string // 视频转换消息
-  codecInfo?: string // 编码器信息
+  conversionMessage?: string // Video conversion message
+  codecInfo?: string // Codec information
 
-  // WebGL 相关状态
-  isWebGLLoading?: boolean // WebGL 纹理是否正在加载
-  webglMessage?: string // WebGL 加载消息
-  webglQuality?: 'high' | 'medium' | 'low' | 'unknown' // WebGL 纹理质量
+  // WebGL related state
+  isWebGLLoading?: boolean // Is WebGL texture loading
+  webglMessage?: string // WebGL loading message
+  webglQuality?: 'high' | 'medium' | 'low' | 'unknown' // WebGL texture quality
 
-  // 错误状态
-  isError?: boolean // 是否出现错误
-  errorMessage?: string // 错误消息
+  // Error state
+  isError?: boolean // Has an error occurred
+  errorMessage?: string // Error message
 }
 
 interface LoadingIndicatorRef {
@@ -88,7 +88,7 @@ export const LoadingIndicator = ({
         </div>
         <div className="flex min-w-0 flex-col gap-0.5">
           {loadingState.isError ? (
-            // 错误状态
+            // Error state
             <>
               <p className="text-xs font-medium text-red-400">
                 {loadingState.errorMessage || t('photo.error.loading')}
@@ -96,14 +96,14 @@ export const LoadingIndicator = ({
               <p className="text-xs text-white/70">{t('loading.default')}</p>
             </>
           ) : loadingState.isConverting ? (
-            // 视频转换状态
+            // Video conversion state
             <>
               <p className="text-xs font-medium text-white tabular-nums">
                 {loadingState.conversionMessage || t('loading.converting')}
               </p>
             </>
           ) : loadingState.isWebGLLoading ? (
-            // WebGL 加载状态
+            // WebGL loading state
             <>
               <div className="flex items-center gap-2">
                 <p className="text-xs font-medium text-white">
@@ -132,7 +132,7 @@ export const LoadingIndicator = ({
               </p>
             </>
           ) : (
-            // 图片加载状态
+            // Image loading state
             <>
               <div className="flex items-center gap-2">
                 <p className="text-xs font-medium text-white">

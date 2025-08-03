@@ -8,7 +8,7 @@
     />
     <meta name="description" content="<%- description %>" />
 
-    <!-- PWA iOS Safari 配置 -->
+    <!-- PWA iOS Safari Configuration -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta
       name="apple-mobile-web-app-status-bar-style"
@@ -35,7 +35,7 @@
   </head>
   <body>
     <div id="root">
-      <!-- Splash Screen - 现代简洁设计 -->
+      <!-- Splash Screen - Modern and Simple Design -->
       <div
         id="splash-screen"
         style="
@@ -54,7 +54,7 @@
           overflow: hidden;
         "
       >
-        <!-- 主要内容 -->
+        <!-- Main Content -->
         <div
           style="
             position: relative;
@@ -83,7 +83,7 @@
               backdrop-filter: blur(10px);
             "
           >
-            <!-- 相机图标 -->
+            <!-- Camera Icon -->
             <svg
               width="20"
               height="20"
@@ -101,7 +101,7 @@
             </svg>
           </div>
 
-          <!-- 应用标题 -->
+          <!-- Application Title -->
           <div style="display: flex; flex-direction: column; gap: 0.75rem">
             <h1
               style="
@@ -131,14 +131,14 @@
             </p>
           </div>
 
-          <!-- 加载动画 -->
+          <!-- Loading Animation -->
           <div
             style="
               margin-top: 1rem;
               animation: loaderFade 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
             "
           >
-            <!-- 点状加载器 -->
+            <!-- Dotted Loader -->
             <div style="display: flex; gap: 0.5rem; align-items: center">
               <div
                 style="
@@ -171,7 +171,7 @@
           </div>
         </div>
 
-        <!-- CSS 动画 -->
+        <!-- CSS Animations -->
         <style>
           @keyframes logoFade {
             0% {
@@ -229,7 +229,7 @@
             }
           }
 
-          /* 响应式设计 */
+          /* Responsive Design */
           @media (max-width: 640px) {
             #splash-screen h1 {
               font-size: 1.5rem;

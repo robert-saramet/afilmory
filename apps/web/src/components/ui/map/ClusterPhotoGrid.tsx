@@ -15,22 +15,24 @@ export const ClusterPhotoGrid = ({
   photos,
   onPhotoClick,
 }: ClusterPhotoGridProps) => {
-  // 最多显示 6 张照片
+  // Show up to 6 photos
   const displayPhotos = photos.slice(0, 6)
   const remainingCount = Math.max(0, photos.length - 6)
-  const { i18n } = useTranslation()
+  const { i18n, t } = useTranslation()
 
   return (
     <div className="space-y-3">
-      {/* 标题 */}
+      {/* Title */}
       <div className="flex items-center justify-between">
         <h3 className="text-text text-sm font-semibold">
-          {photos.length} 张照片
+          {t('gallery.photos_other', { count: photos.length })}
         </h3>
-        <div className="text-text-secondary text-xs">点击查看详情</div>
+        <div className="text-text-secondary text-xs">
+          {t('cluster.viewDetails')}
+        </div>
       </div>
 
-      {/* 照片网格 */}
+      {/* Photo grid */}
       <div className="grid grid-cols-3 gap-2">
         {displayPhotos.map((photoMarker, index) => (
           <m.div
@@ -64,10 +66,10 @@ export const ClusterPhotoGrid = ({
                 threshold={0.1}
               />
 
-              {/* 悬停遮罩 */}
+              {/* Hover mask */}
               <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/20" />
 
-              {/* 悬停图标 */}
+              {/* Hover icon */}
               <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                 <div className="rounded-full bg-black/50 p-2 backdrop-blur-sm">
                   <svg
@@ -89,7 +91,7 @@ export const ClusterPhotoGrid = ({
           </m.div>
         ))}
 
-        {/* 更多照片指示器 */}
+        {/* "More photos" indicator */}
         {remainingCount > 0 && (
           <m.div
             initial={{ opacity: 0, scale: 0.8 }}
@@ -104,13 +106,15 @@ export const ClusterPhotoGrid = ({
               <div className="text-text text-lg font-bold">
                 +{remainingCount}
               </div>
-              <div className="text-text-secondary text-xs">更多</div>
+              <div className="text-text-secondary text-xs">
+                {t('cluster.more')}
+              </div>
             </div>
           </m.div>
         )}
       </div>
 
-      {/* 位置信息 */}
+      {/* Location information */}
       {photos[0] && (
         <div className="border-border space-y-2 border-t pt-3">
           <div className="text-text-secondary flex items-center gap-2 text-xs">
@@ -123,7 +127,7 @@ export const ClusterPhotoGrid = ({
             </span>
           </div>
 
-          {/* 拍摄时间范围 */}
+          {/* Shooting time range */}
           {(() => {
             const dates = photos
               .map((p) => p.photo.exif?.DateTimeOriginal)

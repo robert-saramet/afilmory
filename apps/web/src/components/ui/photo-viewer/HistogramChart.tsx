@@ -61,23 +61,23 @@ const drawHistogram = (
   const ctx = canvas.getContext('2d')
   if (!ctx) return
 
-  // 获取 Canvas 的实际显示尺寸
+  // Get the actual display size of the Canvas
   const rect = canvas.getBoundingClientRect()
   const { width } = rect
   const { height } = rect
   const dpr = window.devicePixelRatio || 1
 
-  // 设置高分辨率
+  // Set high resolution
   canvas.width = width * dpr
   canvas.height = height * dpr
   ctx.scale(dpr, dpr)
   canvas.style.width = `${width}px`
   canvas.style.height = `${height}px`
 
-  // 清空画布
+  // Clear the canvas
   ctx.clearRect(0, 0, width, height)
 
-  // 找到最大值用于归一化
+  // Find the maximum value for normalization
   const maxVal = Math.max(
     ...histogram.luminance,
     ...histogram.red,
@@ -91,7 +91,7 @@ const drawHistogram = (
   const chartWidth = width - padding * 2
   const chartHeight = height - padding * 2
 
-  // Apple 风格的颜色定义
+  // Apple-style color definitions
   const colors = {
     red: 'rgb(255, 105, 97)',
     green: 'rgb(52, 199, 89)',
@@ -102,15 +102,15 @@ const drawHistogram = (
     border: 'rgba(255, 255, 255, 0.08)',
   }
 
-  // 绘制背景
+  // Draw background
   ctx.fillStyle = colors.background
   ctx.fillRect(0, 0, width, height)
 
-  // 绘制极简网格
+  // Draw minimalist grid
   ctx.strokeStyle = colors.grid
   ctx.lineWidth = 0.5
 
-  // 只绘制几条关键的网格线
+  // Only draw a few key grid lines
   for (let i = 1; i <= 3; i++) {
     const y = padding + (chartHeight / 4) * i
     ctx.beginPath()
@@ -119,7 +119,7 @@ const drawHistogram = (
     ctx.stroke()
   }
 
-  // 绘制柱状图函数
+  // Function to draw bars
   const drawBars = (data: number[], color: string, alpha = 1) => {
     const barWidth = chartWidth / data.length
 
@@ -128,25 +128,25 @@ const drawHistogram = (
       const x = padding + i * barWidth
       const y = height - padding - barHeight
 
-      // 创建渐变
+      // Create gradient
       const gradient = ctx.createLinearGradient(0, y, 0, height - padding)
 
-      // 正确处理颜色字符串转换
+      // Correctly handle color string conversion
       let topColor: string
       let bottomColor: string
 
       if (color.startsWith('rgba')) {
-        // 如果已经是 rgba 格式，替换最后的透明度值
+        // If it's already in rgba format, replace the last alpha value
         topColor = color.replace(/[\d.]+\)$/, `${alpha})`)
         bottomColor = color.replace(/[\d.]+\)$/, `${alpha * 0.1})`)
       } else if (color.startsWith('rgb')) {
-        // 如果是 rgb 格式，转换为 rgba
+        // If it's in rgb format, convert to rgba
         topColor = color.replace('rgb', 'rgba').replace(')', `, ${alpha})`)
         bottomColor = color
           .replace('rgb', 'rgba')
           .replace(')', `, ${alpha * 0.1})`)
       } else {
-        // 其他格式直接使用
+        // Use other formats directly
         topColor = color
         bottomColor = color
       }
@@ -159,26 +159,26 @@ const drawHistogram = (
     }
   }
 
-  // 先绘制亮度通道作为背景
+  // First draw the luminance channel as a background
   drawBars(histogram.luminance, colors.luminance, 0.3)
 
-  // 设置混合模式
+  // Set composite operation
   ctx.globalCompositeOperation = 'screen'
 
-  // 绘制 RGB 通道
+  // Draw RGB channels
   drawBars(histogram.red, colors.red, 0.7)
   drawBars(histogram.green, colors.green, 0.7)
   drawBars(histogram.blue, colors.blue, 0.7)
 
-  // 重置混合模式
+  // Reset composite operation
   ctx.globalCompositeOperation = 'source-over'
 
-  // 绘制边框
+  // Draw border
   ctx.strokeStyle = colors.border
   ctx.lineWidth = 1
   ctx.strokeRect(padding - 0.5, padding - 0.5, chartWidth + 1, chartHeight + 1)
 
-  // 添加顶部高光
+  // Add top highlight
   const highlightGradient = ctx.createLinearGradient(0, 0, 0, height * 0.2)
   highlightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.03)')
   highlightGradient.addColorStop(1, 'rgba(255, 255, 255, 0)')
@@ -217,7 +217,7 @@ export const HistogramChart: FC<{
         return
       }
 
-      // 为了更好的性能，缩放图片到合适的大小
+      // For better performance, scale the image to an appropriate size
       const maxSize = 300
       const scale = Math.min(
         maxSize / img.naturalWidth,

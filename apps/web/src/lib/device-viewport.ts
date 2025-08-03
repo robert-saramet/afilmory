@@ -7,7 +7,7 @@ export const isMobileDevice = (() => {
     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
       navigator.userAgent,
     ) ||
-    // 现代检测方式：支持触摸且屏幕较小
+    // Modern detection method: supports touch and has a small screen
     'ontouchstart' in window
   )
 })()

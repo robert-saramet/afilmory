@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { ScrollArea } from '~/components/ui/scroll-areas/ScrollArea'
 
-// JSON 语法高亮组件
+// JSON syntax highlighting component
 const JsonHighlight = ({ data }: { data: any }) => {
   const jsonString = JSON.stringify(data, null, 2)
 
@@ -15,16 +15,16 @@ const JsonHighlight = ({ data }: { data: any }) => {
         let cls = 'text-zinc-500'
         if (match.startsWith('"')) {
           if (match.endsWith(':')) {
-            cls = 'text-blue-400' // 键名
+            cls = 'text-blue-400' // Key name
           } else {
-            cls = 'text-emerald-400' // 字符串值
+            cls = 'text-emerald-400' // String value
           }
         } else if (/true|false/.test(match)) {
-          cls = 'text-purple-400' // 布尔值
+          cls = 'text-purple-400' // Boolean value
         } else if (/null/.test(match)) {
           cls = 'text-red-400' // null
         } else {
-          cls = 'text-orange-400' // 数字
+          cls = 'text-orange-400' // Number
         }
         return `<span class="${cls}">${match}</span>`
       },
@@ -42,7 +42,7 @@ const JsonHighlight = ({ data }: { data: any }) => {
   )
 }
 
-// 统计卡片组件
+// Statistics card component
 const StatCard = ({
   label,
   value,
@@ -66,7 +66,7 @@ const StatCard = ({
   </div>
 )
 
-// 统计信息组件
+// Statistics info component
 const ManifestStats = ({ data }: { data: any[] }) => {
   const stats = useMemo(() => {
     const totalPhotos = data.length
@@ -104,14 +104,14 @@ const ManifestStats = ({ data }: { data: any[] }) => {
   )
 }
 
-// 照片卡片组件
+// Photo card component
 const PhotoCard = ({ photo, index }: { photo: any; index: number }) => (
   <div className="group relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/30 backdrop-blur-sm transition-all hover:border-zinc-700 hover:bg-zinc-900/50">
     <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/0 via-zinc-800/5 to-zinc-800/10 opacity-0 transition-opacity group-hover:opacity-100" />
 
     <div className="relative p-6">
       <div className="flex items-start gap-4">
-        {/* 缩略图 */}
+        {/* Thumbnail */}
         <div className="flex-shrink-0">
           {photo.thumbnailUrl ? (
             <div className="relative overflow-hidden rounded-lg">
@@ -129,7 +129,7 @@ const PhotoCard = ({ photo, index }: { photo: any; index: number }) => (
           )}
         </div>
 
-        {/* 内容 */}
+        {/* Content */}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-3">
             <span className="inline-flex h-6 w-8 items-center justify-center rounded bg-zinc-800 font-mono text-xs text-zinc-400">
@@ -140,7 +140,7 @@ const PhotoCard = ({ photo, index }: { photo: any; index: number }) => (
             </h3>
           </div>
 
-          {/* 元数据网格 */}
+          {/* Metadata grid */}
           <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-3 text-sm lg:grid-cols-3">
             <div className="flex items-center gap-2">
               <span className="text-zinc-500">📐</span>

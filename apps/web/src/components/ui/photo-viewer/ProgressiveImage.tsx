@@ -114,7 +114,7 @@ export const ProgressiveImage = ({
       onTouchStart={handleLongPressStart}
       onTouchEnd={handleLongPressEnd}
     >
-      {/* 缩略图 - 在高分辨率图片未加载或加载失败时显示 */}
+      {/* Thumbnail - shown when high-res image is not loaded or has failed to load */}
       {thumbnailSrc && (!isHighResImageRendered || error) && (
         <img
           ref={thumbnailRef}
@@ -129,7 +129,7 @@ export const ProgressiveImage = ({
         />
       )}
 
-      {/* 高分辨率图片 - 只在成功加载且非错误状态时显示 */}
+      {/* High-resolution image - only shown on successful load and non-error state */}
       {highResLoaded && blobSrc && isCurrentImage && !error && (
         <div
           className="absolute inset-0 h-full w-full"
@@ -138,7 +138,7 @@ export const ProgressiveImage = ({
             showContextMenu(items, e)
           }}
         >
-          {/* LivePhoto 或 HDR 模式使用 DOMImageViewer */}
+          {/* Use DOMImageViewer for LivePhoto or HDR mode */}
           {isLivePhoto || shouldUseHDR ? (
             <DOMImageViewer
               ref={domImageViewerRef}
@@ -150,7 +150,7 @@ export const ProgressiveImage = ({
               highResLoaded={highResLoaded}
               onLoad={() => setState.setIsHighResImageRendered(true)}
             >
-              {/* LivePhoto 视频组件作为 children，跟随图片的变换 */}
+              {/* LivePhoto video component as children, follows the image's transform */}
               {livePhotoVideoUrl && imageLoaderManagerRef.current && (
                 <LivePhotoVideo
                   ref={livePhotoRef}
@@ -163,7 +163,7 @@ export const ProgressiveImage = ({
               )}
             </DOMImageViewer>
           ) : (
-            /* 非 LivePhoto 模式使用 WebGLImageViewer */
+            /* Use WebGLImageViewer for non-LivePhoto mode */
             <WebGLImageViewer
               ref={webglImageViewerRef}
               src={blobSrc}
@@ -196,7 +196,7 @@ export const ProgressiveImage = ({
         <HDRBadge />
       )}
 
-      {/* 备用图片（当 WebGL 不可用时） - 只在非错误状态时显示 */}
+      {/* Fallback image (when WebGL is not available) - only shown in non-error state */}
       {!canUseWebGL && highResLoaded && blobSrc && !error && (
         <div className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-black/20">
           <i className="i-mingcute-warning-line mb-2 text-4xl" />
@@ -206,14 +206,14 @@ export const ProgressiveImage = ({
         </div>
       )}
 
-      {/* 操作提示 */}
+      {/* Action hint */}
       {!isLivePhoto && (
         <div className="pointer-events-none absolute bottom-4 left-1/2 z-20 -translate-x-1/2 rounded bg-black/50 px-2 py-1 text-xs text-white opacity-0 duration-200 group-hover:opacity-50">
           {t('photo.zoom.hint')}
         </div>
       )}
 
-      {/* 缩放倍率提示 */}
+      {/* Zoom ratio indicator */}
       <AnimatePresence>
         {showScaleIndicator && (
           <m.div

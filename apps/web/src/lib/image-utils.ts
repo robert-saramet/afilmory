@@ -1,7 +1,7 @@
 /**
- * 从 URL 或文件路径中提取图片格式
- * @param url - 图片的 URL 或文件路径
- * @returns 图片格式的大写字符串，如 'JPG', 'HEIC', 'PNG' 等
+ * Extract image format from URL or file path
+ * @param url - The URL or file path of the image
+ * @returns The uppercase string of the image format, e.g., 'JPG', 'HEIC', 'PNG', etc.
  */
 export const getImageFormat = (url: string): string => {
   if (!url) return 'UNKNOWN'
@@ -11,10 +11,10 @@ export const getImageFormat = (url: string): string => {
 }
 
 /**
- * 格式化文件大小为可读的字符串
- * @param bytes - 文件大小（字节）
- * @param decimals - 小数位数，默认为 1
- * @returns 格式化后的文件大小字符串，如 '21.1MB'
+ * Format file size into a readable string
+ * @param bytes - File size in bytes
+ * @param decimals - Number of decimal places, default is 1
+ * @returns Formatted file size string, e.g., '21.1MB'
  */
 export const formatFileSize = (bytes: number, decimals = 1): string => {
   if (bytes === 0) return '0B'
@@ -29,9 +29,9 @@ export const formatFileSize = (bytes: number, decimals = 1): string => {
 }
 
 /**
- * 检查是否为支持的图片格式
- * @param format - 图片格式字符串
- * @returns 是否为支持的图片格式
+ * Check if it is a supported image format
+ * @param format - Image format string
+ * @returns Whether it is a supported image format
  */
 export const isSupportedImageFormat = (format: string): boolean => {
   const supportedFormats = [
@@ -54,9 +54,9 @@ export const isSupportedImageFormat = (format: string): boolean => {
 }
 
 /**
- * 获取图片格式的显示名称
- * @param format - 图片格式字符串
- * @returns 格式化后的显示名称
+ * Get the display name of the image format
+ * @param format - Image format string
+ * @returns Formatted display name
  */
 export const getImageFormatDisplayName = (format: string): string => {
   const formatMap: Record<string, string> = {
