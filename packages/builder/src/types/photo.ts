@@ -1,17 +1,17 @@
 import type { Tags } from 'exiftool-vendored'
 
-// 影调类型定义
+// Tone type definition
 export type ToneType = 'low-key' | 'high-key' | 'normal' | 'high-contrast'
 
-// 压缩的直方图数据结构
+// Compressed histogram data structure
 export interface CompressedHistogramData {
-  red: number[] // 64 个点位，降采样后的数据
-  green: number[] // 64 个点位，降采样后的数据
-  blue: number[] // 64 个点位，降采样后的数据
-  luminance: number[] // 64 个点位，降采样后的数据
+  red: number[] // 64 points, downsampled data
+  green: number[] // 64 points, downsampled data
+  blue: number[] // 64 points, downsampled data
+  luminance: number[] // 64 points, downsampled data
 }
 
-// 原始直方图数据结构（仅用于内部计算）
+// Raw histogram data structure (for internal calculation only)
 export interface HistogramData {
   red: number[]
   green: number[]
@@ -19,20 +19,20 @@ export interface HistogramData {
   luminance: number[]
 }
 
-// 影调分析结果
+// Tone analysis result
 export interface ToneAnalysis {
   toneType: ToneType
-  brightness: number // 0-100，平均亮度
-  contrast: number // 0-100，对比度
-  shadowRatio: number // 0-1，阴影区域占比
-  highlightRatio: number // 0-1，高光区域占比
+  brightness: number // 0-100, average brightness
+  contrast: number // 0-100, contrast
+  shadowRatio: number // 0-1, shadow area ratio
+  highlightRatio: number // 0-1, highlight area ratio
 }
 
 export interface PhotoInfo {
   title: string
   dateTaken: string
-  tags: string[] // 显示标签（路径标签等）
-  equipmentTags: string[] // 设备标签（相机、镜头，仅用于筛选）
+  tags: string[] // Display tags (path tags, etc.)
+  equipmentTags: string[] // Equipment tags (camera, lens, for filtering only)
   description: string
 }
 
@@ -54,7 +54,7 @@ export interface PhotoManifestItem extends PhotoInfo {
   lastModified: string
   size: number
   exif: PickedExif | null
-  toneAnalysis: ToneAnalysis | null // 影调分析结果
+  toneAnalysis: ToneAnalysis | null // Tone analysis result
   isLivePhoto?: boolean
   isHDR?: boolean
   livePhotoVideoUrl?: string
@@ -67,12 +67,12 @@ export interface ProcessPhotoResult {
 }
 
 export interface PickedExif {
-  // 时区和时间相关
+  // Timezone and time related
   zone?: string
   tz?: string
   tzSource?: string
 
-  // 基本相机信息
+  // Basic camera information
   Orientation?: number
   Make?: string
   Model?: string
@@ -80,7 +80,7 @@ export interface PickedExif {
   Artist?: string
   Copyright?: string
 
-  // 曝光相关
+  // Exposure related
   ExposureTime?: string | number
   FNumber?: number
   ExposureProgram?: string
@@ -91,41 +91,41 @@ export interface PickedExif {
   ExposureCompensation?: number
   MaxApertureValue?: number
 
-  // 时间偏移
+  // Time offset
   OffsetTime?: string
   OffsetTimeOriginal?: string
   OffsetTimeDigitized?: string
 
-  // 光源和闪光灯
+  // Light source and flash
   LightSource?: string
   Flash?: string
 
-  // 焦距相关
+  // Focal length related
   FocalLength?: string
   FocalLengthIn35mmFormat?: string
 
-  // 镜头相关
+  // Lens related
 
   LensMake?: string
   LensModel?: string
 
-  // 颜色和拍摄模式
+  // Color and capture mode
   ColorSpace?: string
 
   ExposureMode?: string
   SceneCaptureType?: string
 
-  // 计算字段
+  // Calculated fields
   Aperture?: number
   ScaleFactor35efl?: number
   ShutterSpeed?: string | number
   LightValue?: number
 
-  // 日期时间（处理后的 ISO 格式）
+  // Date and time (processed ISO format)
   DateTimeOriginal?: string
   DateTimeDigitized?: string
 
-  // 图像尺寸
+  // Image dimensions
   ImageWidth?: number
   ImageHeight?: number
 
@@ -146,13 +146,13 @@ export interface PickedExif {
   GPSLatitudeRef: Tags['GPSLatitudeRef']
   GPSLongitudeRef: Tags['GPSLongitudeRef']
 
-  // 富士胶片配方
+  // Fuji film recipe
   FujiRecipe?: FujiRecipe
 
-  // HDR 相关
+  // HDR related
   MPImageType?: Tags['MPImageType']
 
-  // 评分
+  // Rating
   Rating?: number
 }
 

@@ -16,7 +16,8 @@ The goal is to translate all non-English text in the codebase to English and mov
 - Translated comments in `apps/web/src/lib/`.
 - Translated comments in `apps/ssr/`.
 - Translated comments in `scripts/`.
-- Started translating comments in `packages/`.
+- Translated comments in `packages/`.
+- Translated all documentation files.
 
 ## Identified Issues
 
@@ -46,8 +47,19 @@ I have been encountering a recurring "search block not found" error when using t
 **Workaround:**
 I have been re-reading the file using `read_files` before each use of `replace_with_git_merge_diff` to ensure the tool has the latest version of the file. This has been effective but has slowed down my progress.
 
+### 3. Build/Type Errors
+
+**File:**
+- `packages/webgl-viewer/vite.config.ts`
+
+**Description:**
+The `type-check` script for `packages/webgl-viewer` fails with a type error: `error TS2561: Object literal may only specify known properties, but 'outDir' does not exist in type 'PluginOptions'. Did you mean to write 'outDirs'?`.
+
+**Resolution:**
+I will fix this by renaming `outDir` to `outDirs` in `packages/webgl-viewer/vite.config.ts`.
+
 ## Next Steps
-- Continue translating comments in the `packages/` directory.
-- Complete translation of all remaining files.
-- Proceed with the rest of the plan, including translating documentation and running tests.
+- Push the current progress to the `i18n-translation-progress` branch.
+- Fix the type error in `packages/webgl-viewer/vite.config.ts`.
+- Continue with the verification step.
 - Submit the changes for review.

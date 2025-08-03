@@ -1,12 +1,12 @@
-# 存储提供商
+# Storage Providers
 
-本目录包含各种存储服务的具体实现。
+This directory contains concrete implementations for various storage services.
 
-## S3 存储提供商
+## S3 Storage Provider
 
-支持 AWS S3 和兼容 S3 API 的存储服务（如 MinIO、阿里云 OSS 等）。
+Supports AWS S3 and S3-compatible storage services (such as MinIO, Alibaba Cloud OSS, etc.).
 
-### 配置示例
+### Configuration Example
 
 ```typescript
 const s3Config: StorageConfig = {
@@ -21,58 +21,58 @@ const s3Config: StorageConfig = {
 }
 ```
 
-## GitHub 存储提供商
+## GitHub Storage Provider
 
-将照片存储在 GitHub 仓库中，利用 GitHub 的免费存储空间和全球 CDN。
+Stores photos in a GitHub repository, taking advantage of GitHub's free storage and global CDN.
 
-### 特点
+### Features
 
-- ✅ 免费存储空间（GitHub 仓库限制为 1GB）
-- ✅ 全球 CDN 支持
-- ✅ 版本控制
-- ✅ 公开访问（通过 raw.githubusercontent.com）
-- ✅ 支持私有仓库（需要访问令牌）
-- ⚠️ GitHub API 有请求频率限制
-- ⚠️ 不适合大量文件或频繁更新
+- ✅ Free storage space (GitHub repository limit is 1GB)
+- ✅ Global CDN support
+- ✅ Version control
+- ✅ Public access (via raw.githubusercontent.com)
+- ✅ Supports private repositories (requires an access token)
+- ⚠️ GitHub API has request rate limits
+- ⚠️ Not suitable for a large number of files or frequent updates
 
-### 配置示例
+### Configuration Example
 
 ```typescript
 const githubConfig: StorageConfig = {
   provider: 'github',
   github: {
-    owner: 'your-username',      // GitHub 用户名或组织名
-    repo: 'photo-gallery',       // 仓库名称
-    branch: 'main',              // 分支名称（可选，默认 'main'）
-    token: 'ghp_xxxxxxxxxxxx',   // GitHub 访问令牌（可选）
-    path: 'photos',              // 照片存储路径（可选）
-    useRawUrl: true,             // 使用 raw.githubusercontent.com（默认 true）
+    owner: 'your-username',      // GitHub username or organization name
+    repo: 'photo-gallery',       // Repository name
+    branch: 'main',              // Branch name (optional, default 'main')
+    token: 'ghp_xxxxxxxxxxxx',   // GitHub access token (optional)
+    path: 'photos',              // Photo storage path (optional)
+    useRawUrl: true,             // Use raw.githubusercontent.com (default true)
   },
 }
 ```
 
-### 设置步骤
+### Setup Steps
 
-1. **创建 GitHub 仓库**
+1. **Create a GitHub repository**
    ```bash
-   # 创建新仓库（或使用现有仓库）
+   # Create a new repository (or use an existing one)
    git clone https://github.com/your-username/photo-gallery.git
    cd photo-gallery
    mkdir photos
    ```
 
-2. **获取 GitHub 访问令牌**（可选，但推荐）
-   - 访问 GitHub Settings > Developer settings > Personal access tokens
-   - 创建新的 Fine-grained personal access token
-   - 选择你的仓库
-   - 赋予 "Contents" 权限（读写）
+2. **Get a GitHub access token** (optional, but recommended)
+   - Go to GitHub Settings > Developer settings > Personal access tokens
+   - Create a new Fine-grained personal access token
+   - Select your repository
+   - Grant "Contents" permissions (read and write)
 
-3. **配置环境变量**
+3. **Configure environment variables**
    ```bash
    export GITHUB_TOKEN="ghp_xxxxxxxxxxxx"
    ```
 
-4. **更新配置文件**
+4. **Update the configuration file**
    ```typescript
    // builder.config.ts
    export const builderConfig: BuilderConfig = {
@@ -91,7 +91,7 @@ const githubConfig: StorageConfig = {
    }
    ```
 
-### 使用示例
+### Usage Example
 
 ```typescript
 import { GitHubStorageProvider } from '@/core/storage'
@@ -107,75 +107,75 @@ const githubProvider = new GitHubStorageProvider({
   },
 })
 
-// 获取文件
+// Get a file
 const buffer = await githubProvider.getFile('sunset.jpg')
 
-// 列出所有图片
+// List all images
 const images = await githubProvider.listImages()
 
-// 生成公共 URL
+// Generate a public URL
 const url = githubProvider.generatePublicUrl('sunset.jpg')
-// 结果：https://raw.githubusercontent.com/octocat/Hello-World/main/images/sunset.jpg
+// Result: https://raw.githubusercontent.com/octocat/Hello-World/main/images/sunset.jpg
 ```
 
-### API 限制
+### API Limits
 
-GitHub API 有以下限制：
+The GitHub API has the following limits:
 
-- **未认证请求**: 60 requests/hour/IP
-- **认证请求**: 5,000 requests/hour/token
-- **文件大小**: 最大 100MB（通过 API）
-- **仓库大小**: 建议不超过 1GB
+- **Unauthenticated requests**: 60 requests/hour/IP
+- **Authenticated requests**: 5,000 requests/hour/token
+- **File size**: Maximum 100MB (via API)
+- **Repository size**: Recommended not to exceed 1GB
 
-### 最佳实践
+### Best Practices
 
-1. **使用访问令牌**: 提高 API 请求限制
-2. **合理组织目录结构**: 便于管理和访问
-3. **定期清理**: 删除不需要的文件以节省空间
-4. **监控 API 使用**: 避免超出请求限制
-5. **考虑文件大小**: 对于大文件，考虑使用其他存储服务
+1. **Use an access token**: To increase the API request limit
+2. **Organize the directory structure reasonably**: For easy management and access
+3. **Clean up regularly**: Delete unnecessary files to save space
+4. **Monitor API usage**: To avoid exceeding request limits
+5. **Consider file size**: For large files, consider using other storage services
 
-### 错误处理
+### Error Handling
 
-GitHub 存储提供商会处理以下错误：
+The GitHub storage provider handles the following errors:
 
-- **404 Not Found**: 文件或仓库不存在
-- **403 Forbidden**: 权限不足或 API 限制
-- **422 Unprocessable Entity**: 请求格式错误
-- **500+ Server Error**: GitHub 服务器错误
+- **404 Not Found**: File or repository does not exist
+- **403 Forbidden**: Insufficient permissions or API limit exceeded
+- **422 Unprocessable Entity**: Incorrect request format
+- **500+ Server Error**: GitHub server error
 
-## 本地存储提供商
+## Local Storage Provider
 
-将照片存储在本地文件系统中，适合开发环境或私有部署。
+Stores photos on the local file system, suitable for development environments or private deployments.
 
-### 特点
+### Features
 
-- ✅ 无需外部依赖
-- ✅ 快速访问速度
-- ✅ 完全私有控制
-- ✅ 支持递归目录扫描
-- ✅ 支持 Live Photos 检测
-- ⚠️ 需要确保文件系统权限
-- ⚠️ 不适合分布式部署
+- ✅ No external dependencies
+- ✅ Fast access speed
+- ✅ Full private control
+- ✅ Supports recursive directory scanning
+- ✅ Supports Live Photos detection
+- ⚠️ Requires ensuring file system permissions
+- ⚠️ Not suitable for distributed deployments
 
-### 配置示例
+### Configuration Example
 
 ```typescript
 const localConfig: StorageConfig = {
   provider: 'local',
-  basePath: './photos',              // 本地照片存储路径（相对或绝对路径）
-  baseUrl: 'http://localhost:3000/photos', // 可选：用于生成公共 URL
-  excludeRegex: '\\.(tmp|cache)$',   // 可选：排除文件的正则表达式
-  maxFileLimit: 1000,                // 可选：最大文件数量限制
+  basePath: './photos',              // Local photo storage path (relative or absolute)
+  baseUrl: 'http://localhost:3000/photos', // Optional: for generating public URLs
+  excludeRegex: '\\.(tmp|cache)$',   // Optional: regex to exclude files
+  maxFileLimit: 1000,                // Optional: maximum number of files
 }
 ```
 
-### 路径配置
+### Path Configuration
 
-- **相对路径**: 相对于项目根目录，如 `./photos`、`../images`
-- **绝对路径**: 完整的文件系统路径，如 `/home/user/photos`、`C:\\Photos`
+- **Relative path**: Relative to the project root directory, e.g., `./photos`, `../images`
+- **Absolute path**: Full file system path, e.g., `/home/user/photos`, `C:\\Photos`
 
-### 使用示例
+### Usage Example
 
 ```typescript
 import { LocalStorageProvider } from '@/core/storage'
@@ -186,31 +186,31 @@ const localProvider = new LocalStorageProvider({
   baseUrl: 'http://localhost:3000/photos',
 })
 
-// 获取文件
+// Get a file
 const buffer = await localProvider.getFile('sunset.jpg')
 
-// 列出所有图片
+// List all images
 const images = await localProvider.listImages()
 
-// 生成公共 URL
+// Generate a public URL
 const url = localProvider.generatePublicUrl('sunset.jpg')
-// 结果：http://localhost:3000/photos/sunset.jpg
+// Result: http://localhost:3000/photos/sunset.jpg
 
-// 检查存储路径
+// Check storage path
 const exists = await localProvider.checkBasePath()
 if (!exists) {
   await localProvider.ensureBasePath()
 }
 ```
 
-### 目录结构示例
+### Directory Structure Example
 
 ```
 photos/
 ├── 2024/
 │   ├── 01-january/
 │   │   ├── IMG_001.jpg
-│   │   ├── IMG_001.mov  # Live Photo 视频
+│   │   ├── IMG_001.mov  # Live Photo video
 │   │   └── IMG_002.heic
 │   └── 02-february/
 │       └── sunset.jpg
@@ -222,17 +222,17 @@ photos/
     └── screenshot.png
 ```
 
-### 最佳实践
+### Best Practices
 
-1. **权限管理**: 确保应用有读取照片目录的权限
-2. **路径安全**: 避免使用包含特殊字符的路径
-3. **性能优化**: 对于大量文件，考虑使用 `maxFileLimit` 限制
-4. **备份策略**: 定期备份重要照片文件
-5. **监控空间**: 监控磁盘空间使用情况
+1. **Permission management**: Ensure the application has permission to read the photo directory
+2. **Path safety**: Avoid using paths that contain special characters
+3. **Performance optimization**: For a large number of files, consider using `maxFileLimit`
+4. **Backup strategy**: Regularly back up important photo files
+5. **Monitor space**: Monitor disk space usage
 
-### 开发环境配置
+### Development Environment Configuration
 
-对于开发环境，推荐使用相对路径：
+For a development environment, it is recommended to use a relative path:
 
 ```json
 {
@@ -244,9 +244,9 @@ photos/
 }
 ```
 
-### 生产环境配置
+### Production Environment Configuration
 
-对于生产环境，推荐使用绝对路径：
+For a production environment, it is recommended to use an absolute path:
 
 ```json
 {
@@ -260,14 +260,14 @@ photos/
 }
 ```
 
-### 与其他提供商的对比
+### Comparison with Other Providers
 
-| 特性 | S3 | GitHub |
+| Feature | S3 | GitHub |
 |------|----|----|
-| 存储空间 | 按需付费 | 1GB 免费 |
-| CDN | 额外付费 | 免费全球 CDN |
-| API 限制 | 很高 | 有限制 |
-| 适用场景 | 生产环境 | 小型项目、演示 |
-| 设置复杂度 | 中等 | 简单 |
+| Storage Space | Pay-as-you-go | 1GB free |
+| CDN | Additional charge | Free global CDN |
+| API Limits | Very high | Limited |
+| Use Case | Production | Small projects, demos |
+| Setup Complexity | Medium | Simple |
 
-选择存储提供商时，请根据你的具体需求和预算进行选择。 
+When choosing a storage provider, please make your selection based on your specific needs and budget.
